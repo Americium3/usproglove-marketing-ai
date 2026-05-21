@@ -13,6 +13,8 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { sendEmail } from "@/lib/email/brevo";
 import { renderRfqTouch, TOUCH_CADENCE_DAYS, type TouchKind } from "@/../content/buyside/rfq";
+import { personalizeForRecipient } from "@/lib/buyside/personalize";
+import { gatherProspectResearch, renderResearchForPrompt } from "@/lib/buyside/research";
 
 export interface BuysideContext {
   campaignId: string;
@@ -21,6 +23,11 @@ export interface BuysideContext {
   replyToEmail: string;
   dailyCap: number;
   dryRun?: boolean;
+  /**
+   * AI-personalize the opener + close CTA per recipient (role + region tuned).
+   * Defaults to true. Set false for a fully deterministic static run.
+   */
+  personalize?: boolean;
 }
 
 export interface BuysideResultItem {
@@ -105,6 +112,11 @@ export async function runBuysideRfq(ctx: BuysideContext): Promise<BuysideSummary
       status: schema.prospects.status,
       companyId: schema.prospects.companyId,
       companyName: schema.companies.name,
+      companyCity: schema.companies.city,
+      companyRegion: schema.companies.region,
+      companyCountryCode: schema.companies.countryCode,
+      companyMetadata: schema.companies.metadata,
+      companySubVertical: schema.companies.subVertical,
     })
     .from(schema.prospects)
     .innerJoin(schema.companies, eq(schema.prospects.companyId, schema.companies.id))
@@ -195,11 +207,85 @@ export async function runBuysideRfq(ctx: BuysideContext): Promise<BuysideSummary
       continue;
     }
 
+    let opener: string | undefined;
+    let closeCta: string | undefined;
+    let psLine: string | undefined;
+    let personalizationMeta: { roleBucket: string; region: string } | undefined;
+    const wantPersonalize = ctx.personalize !== false;
+    if (wantPersonalize) {
+      const meta = (p.companyMetadata ?? {}) as Record<string, unknown>;
+
+      // 1. Gather research (cached if fresh). Failure here is non-fatal.
+      let researchContext: string | undefined;
+      try {
+        const research = await gatherProspectResearch({
+          prospectId: p.id,
+          firstName: p.firstName,
+          lastName: p.lastName,
+          title: p.role,
+          supplierName: p.companyName,
+          supplierDomain: typeof meta.apolloDomain === "string" ? meta.apolloDomain : null,
+          knownLinkedinUrl: null, // could be sourced from prospect metadata if persisted earlier
+        });
+        researchContext = renderResearchForPrompt(research);
+      } catch (err) {
+        console.warn(
+          `[buyside] research failed for ${p.email}: ${(err as Error).message}`,
+        );
+      }
+
+      // 2. Generate the opener + close CTA, feeding research if available.
+      try {
+        const personalized = await personalizeForRecipient({
+          campaignId: ctx.campaignId,
+          prospectId: p.id,
+          touch: action,
+          recipient: { firstName: p.firstName, title: p.role },
+          supplier: {
+            name: p.companyName,
+            country: countryNameFromCode(p.companyCountryCode) ?? (p.companyRegion ?? null),
+            city: p.companyCity,
+            employees: typeof meta.employees === "number" ? meta.employees : null,
+            founded: typeof meta.founded === "number" ? meta.founded : null,
+            industry: p.companySubVertical,
+            keywords: typeof meta.keywords === "string" ? meta.keywords : null,
+          },
+          researchContext,
+        });
+        opener = personalized.opener;
+        closeCta = personalized.closeCta;
+        psLine = personalized.psLine;
+        personalizationMeta = personalized.meta;
+
+        // Fallback PS for non-NA recipients on first_touch when the model
+        // skipped the optional psLine. The schema marks it optional, so the
+        // AI sometimes omits it even when the prompt requires one — we
+        // backstop with a static line that respects the timezone gap.
+        if (
+          action === "first_touch" &&
+          !psLine &&
+          personalized.meta.region !== "north_america" &&
+          personalized.meta.region !== "other"
+        ) {
+          psLine = staticPsFor(personalized.meta.region);
+        }
+      } catch (err) {
+        console.warn(
+          `[buyside] personalization failed for ${p.email} (touch=${action}): ${(err as Error).message}`,
+        );
+      }
+    }
+
     const rendered = renderRfqTouch(action, {
       supplierName: p.companyName,
       recipientFirstName: p.firstName,
+      opener,
+      closeCta,
+      psLine,
+      senderPhone: process.env.SENDER_PHONE || null,
     });
 
+    void personalizationMeta;
     if (ctx.dryRun) {
       results.push({
         prospectId: p.id,
@@ -307,3 +393,42 @@ function zeroSummary(): BuysideSummary {
 
 // Suppress unused-import warning if `sql` import isn't needed after final edits.
 void sql;
+
+// Reverse of the seed's inferCountryCode — convert ISO-2 back to full country
+// name so the personalization layer can do regional classification by name.
+const COUNTRY_BY_CODE: Record<string, string> = {
+  US: "United States",
+  GB: "United Kingdom",
+  TH: "Thailand",
+  CN: "China",
+  IN: "India",
+  MY: "Malaysia",
+  BE: "Belgium",
+  CA: "Canada",
+  PT: "Portugal",
+  AU: "Australia",
+  UG: "Uganda",
+  SA: "Saudi Arabia",
+};
+
+function countryNameFromCode(code?: string | null): string | null {
+  if (!code) return null;
+  return COUNTRY_BY_CODE[code.toUpperCase()] ?? null;
+}
+
+function staticPsFor(region: string): string {
+  switch (region) {
+    case "asia":
+      return "P.S. — happy to take your morning calls; ET evenings (= your mornings) are convenient on my side.";
+    case "europe":
+      return "P.S. — early AM ET overlaps with your afternoon; I'll arrange around your hours.";
+    case "mena":
+      return "P.S. — happy to take a call in your morning; ET mornings line up well with your afternoons.";
+    case "africa":
+      return "P.S. — flexible with hours on my side; happy to take a call during your business day.";
+    case "oceania":
+      return "P.S. — happy to take a late-evening ET call; that's your business morning.";
+    default:
+      return "P.S. — flexible on timezone — happy to bend my ET hours to fit yours.";
+  }
+}
