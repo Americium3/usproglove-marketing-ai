@@ -10,12 +10,73 @@
     "replies": "回复",
     "content": "内容",
     "cron": "定时任务",
+    "social": "社交媒体",
+    "ads": "广告",
+    "knowledge": "知识库",
     "faq": "常见问题",
     "settings": "设置"
   },
   "faq": {
     "title": "常见问题",
     "subtitle": "系统的工作原理、使用预期与常见排查方法"
+  },
+  "assistant": {
+    "triggerLabel": "问 AI",
+    "open": "打开助手",
+    "close": "关闭助手",
+    "title": "营销 AI 助手",
+    "subtitle": "回答问题、调研客户、起草文案",
+    "inputPlaceholder": "想问什么都行 — 客户调研、文案、指标、市场信息…",
+    "send": "发送",
+    "thinking": "思考中…",
+    "error": "错误",
+    "sources": "来源",
+    "emptyPrompt": "问问关于系统或你市场的任何问题",
+    "suggestion1": "调研美国手套市场的主要竞品",
+    "suggestion2": "为德州牙科诊所写一份 ICP",
+    "suggestion3": "给纹身工作室想 3 条邮件主题",
+    "dashboardTitle": "问一下助手",
+    "dashboardSubtitle": "支持联网搜索，Cmd+Enter 发送",
+    "dashboardPlaceholder": "例如：FDA 最近关于检查手套的新规是什么？或者：帮我写一份纽约美甲店的 ICP"
+  },
+  "social": {
+    "title": "社交媒体",
+    "phase": "第三阶段",
+    "description": "对接 LinkedIn、Instagram、Facebook、X 和抖音，撰写、定时发布、跨平台复用活动内容",
+    "plannedModules": "计划模块",
+    "modules": {
+      "accounts": "各平台 OAuth 连接",
+      "compose": "多平台内容撰写器 + AI 辅助",
+      "schedule": "定时发布队列，各平台最佳时段",
+      "repurpose": "外联内容自动复用为社交媒体帖子",
+      "analytics": "互动数据 + 私信回流到收件箱"
+    }
+  },
+  "ads": {
+    "title": "广告管理",
+    "phase": "第三阶段",
+    "description": "Google Ads 与 Meta Ads：AI 生成创意、预算控制、点击到成交的归因追踪",
+    "plannedModules": "计划模块",
+    "modules": {
+      "accounts": "连接 Google Ads 与 Meta Ads 账户",
+      "creatives": "按垂直行业 AI 生成广告文案与图像 prompt",
+      "campaigns": "在控制台启动、暂停、调整广告活动",
+      "budget": "日 / 月预算上限与预警",
+      "attribution": "点击 → 潜客 → 营收全链路归因"
+    }
+  },
+  "knowledge": {
+    "title": "知识库",
+    "phase": "第二阶段",
+    "description": "内部知识存储：产品参数、买家画像、FAQ 话术、合规文档。AI 助手与外联起草流程自动检索",
+    "plannedModules": "计划模块",
+    "modules": {
+      "documents": "上传 PDF、MDX、URL，自动切块与向量化",
+      "personas": "按垂直行业的买家画像库",
+      "responses": "常见异议的标准话术",
+      "retrieval": "起草与助手对话时自动语义检索",
+      "training": "根据回复数据持续优化起草质量"
+    }
   },
   "auth": {
     "signIn": "登录",
@@ -81,6 +142,9 @@
       "senderEmail": "发件人邮箱",
       "senderName": "发件人姓名",
       "replyToEmail": "回复邮箱",
+      "signatureText": "邮件签名",
+      "signaturePlaceholder": "—\nJay Lin\nFounder, USProGlove\njay.lin@usproglove.us\nhttps://usproglove.us",
+      "signatureHint": "会自动附加到每封发出的邮件末尾。纯文本，HTML 版本自动生成。留空则使用环境变量中的全局默认签名",
       "submit": "创建计划",
       "update": "保存修改",
       "saving": "保存中…",

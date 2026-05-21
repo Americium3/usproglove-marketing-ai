@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { checkAdmin } from "@/lib/auth/admin";
 import { LocaleSwitcher } from "./_components/LocaleSwitcher";
+import { AssistantWidget } from "./_components/AssistantWidget";
 
 export default async function AdminLayout({
   children,
@@ -50,6 +51,9 @@ export default async function AdminLayout({
     ["/prospects", t("prospects")],
     ["/replies", t("replies")],
     ["/content", t("content")],
+    ["/social", t("social")],
+    ["/ads", t("ads")],
+    ["/knowledge", t("knowledge")],
     ["/cron", t("cron")],
     ["/faq", t("faq")],
   ];
@@ -73,6 +77,7 @@ export default async function AdminLayout({
         </aside>
         <main className="flex-1 p-6 sm:p-10">{children}</main>
       </div>
+      <AssistantWidget />
     </div>
   );
 }

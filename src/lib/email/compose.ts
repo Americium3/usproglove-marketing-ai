@@ -79,12 +79,32 @@ function buildDefaultSignatureHtml(sender: SenderIdentity): string {
   return `<p style="color:#555;font-size:13px;line-height:1.5;">${parts.join("")}</p>`;
 }
 
-export function getSignature(sender: SenderIdentity): { text: string; html: string } {
-  const overrideText = process.env.SENDER_SIGNATURE_TEXT?.trim();
-  const overrideHtml = process.env.SENDER_SIGNATURE_HTML?.trim();
+function textToSimpleSignatureHtml(text: string): string {
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const linked = escaped.replace(
+    /(https?:\/\/[^\s<]+|[\w.+-]+@[\w.-]+)/g,
+    (m) => (m.includes("@") ? `<a href="mailto:${m}">${m}</a>` : `<a href="${m}">${m}</a>`),
+  );
+  const withBreaks = linked.replace(/\n/g, "<br>");
+  return `<p style="color:#555;font-size:13px;line-height:1.5;">${withBreaks}</p>`;
+}
+
+export function getSignature(
+  sender: SenderIdentity,
+  override?: { text?: string | null },
+): { text: string; html: string } {
+  const perCampaign = override?.text?.trim();
+  if (perCampaign) {
+    return { text: perCampaign, html: textToSimpleSignatureHtml(perCampaign) };
+  }
+  const envText = process.env.SENDER_SIGNATURE_TEXT?.trim();
+  const envHtml = process.env.SENDER_SIGNATURE_HTML?.trim();
   return {
-    text: overrideText || buildDefaultSignatureText(sender),
-    html: overrideHtml || buildDefaultSignatureHtml(sender),
+    text: envText || buildDefaultSignatureText(sender),
+    html: envHtml || buildDefaultSignatureHtml(sender),
   };
 }
 
@@ -97,9 +117,10 @@ export function composeEmail(args: {
   draft: DraftedBody;
   sender: SenderIdentity;
   recipient: Recipient;
+  signatureOverride?: { text?: string | null };
 }): ComposedEmail {
   const { draft, sender, recipient } = args;
-  const sig = getSignature(sender);
+  const sig = getSignature(sender, args.signatureOverride);
   const recipientName = [recipient.firstName, recipient.lastName].filter(Boolean).join(" ") || null;
 
   const textContent = `${draft.textBody.trimEnd()}\n\n${sig.text}\n`;

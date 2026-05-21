@@ -1,0 +1,346 @@
+{
+  "brand": {
+    "name": "USProGlove 行銷智能體",
+    "tagline": "B2B 外聯、內容與生命週期自動化"
+  },
+  "nav": {
+    "dashboard": "儀表板",
+    "campaigns": "行銷計劃",
+    "prospects": "潛在客戶",
+    "replies": "回覆",
+    "content": "內容",
+    "cron": "定時任務",
+    "social": "社群媒體",
+    "ads": "廣告",
+    "knowledge": "知識庫",
+    "faq": "常見問題",
+    "settings": "設定"
+  },
+  "faq": {
+    "title": "常見問題",
+    "subtitle": "系統的運作原理、使用預期與常見排查方法"
+  },
+  "assistant": {
+    "triggerLabel": "問 AI",
+    "open": "開啟助手",
+    "close": "關閉助手",
+    "title": "行銷 AI 助手",
+    "subtitle": "回答問題、調研客戶、草擬文案",
+    "inputPlaceholder": "想問什麼都行 — 客戶調研、文案、指標、市場資訊…",
+    "send": "傳送",
+    "thinking": "思考中…",
+    "error": "錯誤",
+    "sources": "來源",
+    "emptyPrompt": "問問關於系統或你市場的任何問題",
+    "suggestion1": "調研美國手套市場的主要競品",
+    "suggestion2": "為德州牙科診所寫一份 ICP",
+    "suggestion3": "給紋身工作室想 3 條郵件主旨",
+    "dashboardTitle": "問一下助手",
+    "dashboardSubtitle": "支援聯網搜尋，Cmd+Enter 傳送",
+    "dashboardPlaceholder": "例如：FDA 最近關於檢查手套的新規是什麼？或者：幫我寫一份紐約美甲店的 ICP"
+  },
+  "social": {
+    "title": "社群媒體",
+    "phase": "第三階段",
+    "description": "對接 LinkedIn、Instagram、Facebook、X 與抖音，撰寫、定時發布、跨平台複用活動內容",
+    "plannedModules": "規劃模組",
+    "modules": {
+      "accounts": "各平台 OAuth 連線",
+      "compose": "多平台內容撰寫器 + AI 輔助",
+      "schedule": "定時發布佇列，各平台最佳時段",
+      "repurpose": "外聯內容自動複用為社群貼文",
+      "analytics": "互動資料 + 私訊回流到收件匣"
+    }
+  },
+  "ads": {
+    "title": "廣告管理",
+    "phase": "第三階段",
+    "description": "Google Ads 與 Meta Ads：AI 產生創意、預算控管、點擊到成交的歸因追蹤",
+    "plannedModules": "規劃模組",
+    "modules": {
+      "accounts": "連線 Google Ads 與 Meta Ads 帳號",
+      "creatives": "依垂直行業 AI 產生廣告文案與圖像 prompt",
+      "campaigns": "在控制台啟動、暫停、調整廣告活動",
+      "budget": "日 / 月預算上限與預警",
+      "attribution": "點擊 → 潛客 → 營收全鏈路歸因"
+    }
+  },
+  "knowledge": {
+    "title": "知識庫",
+    "phase": "第二階段",
+    "description": "內部知識儲存：產品規格、買家畫像、FAQ 話術、合規文件。AI 助手與外聯草擬流程自動擷取",
+    "plannedModules": "規劃模組",
+    "modules": {
+      "documents": "上傳 PDF、MDX、URL，自動切塊與向量化",
+      "personas": "依垂直行業的買家畫像庫",
+      "responses": "常見異議的標準話術",
+      "retrieval": "草擬與助手對話時自動語意檢索",
+      "training": "依據回覆資料持續優化草擬品質"
+    }
+  },
+  "auth": {
+    "signIn": "登入",
+    "signOut": "登出",
+    "signedInAs": "已登入",
+    "forbiddenTitle": "無存取權限",
+    "forbiddenDesc": "帳號已登入，但不在此後台的管理員名單中"
+  },
+  "campaigns": {
+    "title": "行銷計劃",
+    "newTitle": "新建行銷計劃",
+    "editTitle": "編輯行銷計劃",
+    "edit": "編輯",
+    "newButton": "+ 新建計劃",
+    "empty": "尚未建立行銷計劃，建立一個即可開始自動外聯",
+    "columns": {
+      "name": "名稱",
+      "vertical": "行業",
+      "sku": "主打 SKU",
+      "dailyCap": "每日上限",
+      "contactsPerCompany": "每公司聯絡人",
+      "status": "狀態",
+      "createdAt": "建立時間",
+      "actions": "操作"
+    },
+    "status": {
+      "draft": "草稿",
+      "active": "運行中",
+      "paused": "暫停",
+      "archived": "歸檔"
+    },
+    "icp": {
+      "configured": "自訂",
+      "default": "預設"
+    },
+    "run": {
+      "discover": "僅探索",
+      "discoverHint": "只擷取公司 + 驗證信箱，不呼叫 AI 也不寄送",
+      "discoverPrompt": "本輪探索多少筆潛客？",
+      "preview": "預演",
+      "runOnce": "立即寄送",
+      "running": "執行中…",
+      "cancel": "中止",
+      "clear": "清空",
+      "clearConfirm": "確定清空此計劃的執行記錄？",
+      "download": "下載",
+      "logTitle": "執行記錄（{n}）",
+      "confirmLive": "此操作會真實寄送郵件（受每日上限約束），是否繼續？",
+      "discoveredResult": "已探索 {n} 筆",
+      "previewResult": "預演 {n} 筆",
+      "sentResult": "已寄送 {n} 筆",
+      "skipped": "略過 {n} 筆",
+      "failed": "失敗 {n} 筆"
+    },
+    "form": {
+      "name": "計劃名稱",
+      "namePlaceholder": "例如：紐約餐廳 · Q2 預熱",
+      "vertical": "行業",
+      "sku": "主打 SKU",
+      "dailyCap": "每日寄送上限",
+      "contactsPerCompany": "每公司聯絡人數（1-10）",
+      "status": "狀態",
+      "senderEmail": "寄件者信箱",
+      "senderName": "寄件者姓名",
+      "replyToEmail": "回覆信箱",
+      "signatureText": "郵件簽名",
+      "signaturePlaceholder": "—\nJay Lin\nFounder, USProGlove\njay.lin@usproglove.us\nhttps://usproglove.us",
+      "signatureHint": "會自動附加到每封寄出的郵件末尾。純文字，HTML 版本自動產生。留空則使用環境變數中的全域預設簽名",
+      "submit": "建立計劃",
+      "update": "儲存變更",
+      "saving": "儲存中…",
+      "errorForbidden": "管理員權限已失效，請重新登入",
+      "icpSectionTitle": "理想客戶畫像 ICP（選填）",
+      "icpDescription": "ICP 描述 — 供 AI 評分使用",
+      "icpDescriptionPlaceholder": "例如：灣區獨立醫療診所，Google 評價 20-100 則。目標是 Practice Manager 與診所負責人。排除大型醫院集團與藥局",
+      "icpCities": "目標城市（逗號分隔）",
+      "icpExcludeKeywords": "排除公司名關鍵字",
+      "icpMinReviews": "最少 Google 評價數",
+      "icpMinRating": "最低 Google 評分（0-5）",
+      "icpPreferredRoles": "目標職位（逗號分隔，覆寫預設）"
+    }
+  },
+  "dashboard": {
+    "title": "活動總覽",
+    "todaySent": "今日已寄送",
+    "todayReplies": "今日回覆",
+    "activeCampaigns": "進行中活動",
+    "replyRate": "回覆率（7 天）",
+    "usageTitle": "用量與花費",
+    "tokensToday": "今日 Token",
+    "aiCostToday": "今日 AI 成本",
+    "aiCallsToday": "今日 AI 呼叫",
+    "dbSize": "資料庫大小",
+    "quotaTitle": "服務配額",
+    "emailQuota": "郵件寄送剩餘",
+    "emailQuotaSub": "每日重置",
+    "emailCredits": "郵件額度剩餘",
+    "emailCreditsSub": "每月重置",
+    "discoveryQuota": "客戶搜尋剩餘",
+    "discoveryQuotaSub": "每月重置",
+    "verificationQuota": "信箱驗證剩餘",
+    "verificationQuotaSub": "每月重置",
+    "enrichmentCredits": "Enrichment 額度剩餘",
+    "enrichmentCreditsSub": "每月重置",
+    "lastSnapshotted": "最近快照",
+    "cronTitle": "定時任務",
+    "cronViewAll": "檢視歷史",
+    "cronNever": "尚未執行",
+    "cronStatus": {
+      "running": "執行中",
+      "success": "成功",
+      "error": "失敗"
+    },
+    "cronJobs": {
+      "outbound": {
+        "name": "外聯寄送",
+        "description": "探索潛客、驗證信箱、AI 評分、產生個人化郵件並在每日上限內寄送",
+        "schedule": "每 4 小時"
+      },
+      "reply-poll": {
+        "name": "回覆拉取",
+        "description": "從 IMAP 信箱拉取回覆並比對至潛客，繼續推進外聯流程",
+        "schedule": "每 15 分鐘"
+      },
+      "content-publish": {
+        "name": "內容發布",
+        "description": "發布到達預定時間的 SEO / 內容項目",
+        "schedule": "每日 09:00"
+      },
+      "usage-snapshot": {
+        "name": "用量快照",
+        "description": "記錄資料庫大小、各表列數、各服務商剩餘配額",
+        "schedule": "每日 00:00"
+      }
+    }
+  },
+  "prospects": {
+    "title": "潛在客戶",
+    "empty": "尚無潛在客戶，啟用一個行銷計劃並觸發外聯後會自動填入",
+    "columns": {
+      "company": "公司",
+      "vertical": "行業",
+      "contact": "聯絡人",
+      "score": "評分",
+      "status": "狀態",
+      "updatedAt": "更新時間"
+    },
+    "statusFilter": {
+      "all": "全部",
+      "discovered": "已探索",
+      "enriching": "充實中",
+      "enriched": "已充實",
+      "ready": "待寄送",
+      "sending": "寄送中",
+      "sent": "已寄送",
+      "replied": "已回覆",
+      "bounced": "退信",
+      "suppressed": "已封鎖",
+      "unsubscribed": "已取消訂閱"
+    },
+    "detail": {
+      "back": "返回潛在客戶",
+      "company": "公司",
+      "contact": "聯絡人",
+      "role": "職位",
+      "email": "信箱",
+      "website": "網站",
+      "location": "地點",
+      "confidence": "充實信心度",
+      "verification": "信箱驗證",
+      "verificationScore": "分數",
+      "verificationDeliverable": "可送達",
+      "aiScoreTitle": "AI 匹配評分",
+      "aiReasoning": "評分理由",
+      "suggestedSku": "推薦 SKU",
+      "draftTitle": "草稿（尚未寄送）",
+      "from": "寄件者",
+      "to": "收件者",
+      "replyTo": "回覆至",
+      "subject": "主旨",
+      "body": "內文",
+      "edit": "編輯",
+      "save": "儲存",
+      "saving": "儲存中…",
+      "cancel": "取消",
+      "sendNow": "立即寄送",
+      "sending": "寄送中…",
+      "sendConfirm": "確認立即寄送？這是一次真實寄送，會計入今日寄送上限",
+      "sendSuccess": "郵件已寄送",
+      "sendError": "寄送失敗",
+      "editSaved": "草稿已儲存",
+      "editError": "儲存失敗",
+      "refineTitle": "AI 輔助",
+      "refineOneClick": "✨ 一鍵優化",
+      "refineApply": "✨ 套用",
+      "refining": "產生中…",
+      "refinePromptPlaceholder": "例如：更簡短一點、加一個明確的行動呼籲、語氣更隨意一些…",
+      "refinePromptEmpty": "請先輸入優化指令",
+      "refineHint": "優化結果會直接取代目前草稿，滿意後點儲存",
+      "refineSuccess": "草稿已優化",
+      "refineError": "優化失敗",
+      "messagesTitle": "郵件記錄",
+      "messagesEmpty": "尚未寄送任何郵件",
+      "sentAt": "寄送時間",
+      "timelineTitle": "流程時間軸",
+      "timelineEmpty": "尚無事件",
+      "suppressionReason": "封鎖原因"
+    }
+  },
+  "replies": {
+    "title": "回覆收件匣",
+    "empty": "尚無回覆"
+  },
+  "cron": {
+    "title": "定時任務",
+    "description": "由 Upstash QStash 觸發的背景任務執行狀態與歷史記錄",
+    "historyTitle": "執行記錄",
+    "empty": "尚無執行記錄，定時任務首次觸發或手動執行後會在此顯示",
+    "never": "尚未執行",
+    "retry": "立即執行",
+    "retryPending": "執行中…",
+    "filterAll": "全部",
+    "status": {
+      "running": "執行中",
+      "success": "成功",
+      "error": "失敗"
+    },
+    "trigger": {
+      "scheduled": "定時",
+      "manual": "手動",
+      "retry": "重試"
+    },
+    "col": {
+      "startedAt": "開始時間",
+      "job": "任務",
+      "trigger": "觸發方式",
+      "status": "狀態",
+      "duration": "耗時",
+      "summary": "結果 / 錯誤"
+    }
+  },
+  "content": {
+    "title": "內容與 SEO 引擎",
+    "phase": "第二階段",
+    "description": "依行業垂直領域產生關鍵字集群、長文稿、頁面 SEO 與定時發布",
+    "plannedModules": "規劃模組",
+    "modules": {
+      "clusters": "各垂直行業關鍵字集群",
+      "drafts": "AI 產生長文稿",
+      "seo": "頁面 SEO 與 JSON-LD 結構化資料",
+      "schedule": "定時發布佇列",
+      "internalLinks": "與外聯落地頁內部連結互通"
+    }
+  },
+  "verticals": {
+    "tattoo": "紋身 / 穿孔",
+    "beauty": "美容 / 美甲 / 沙龍",
+    "restaurant": "餐飲 / 食品服務",
+    "medical": "醫療 / 診所",
+    "industrial": "工業 / 製造",
+    "automotive": "汽車服務",
+    "agriculture": "農業 / 農場",
+    "janitorial": "清潔 / 保潔",
+    "cannabis": "大麻行業",
+    "veterinary": "獸醫"
+  }
+}

@@ -31,6 +31,7 @@ export interface CampaignFormDefaults {
   senderEmail: string;
   senderName: string;
   replyToEmail: string;
+  signatureText?: string;
   dailyCap: number;
   contactsPerCompany: number;
   // optional for create; populated for edit
@@ -171,6 +172,18 @@ export function CampaignForm({
 
       <Field label={t("replyToEmail")} error={err.replyToEmail?.[0]}>
         <input type="email" name="replyToEmail" defaultValue={defaults.replyToEmail} required className={inputClass} />
+      </Field>
+
+      <Field label={t("signatureText")} error={err.signatureText?.[0]}>
+        <textarea
+          name="signatureText"
+          rows={5}
+          maxLength={2000}
+          defaultValue={defaults.signatureText ?? ""}
+          placeholder={t("signaturePlaceholder")}
+          className={`${inputClass} font-mono`}
+        />
+        <span className="block text-xs text-neutral-500 mt-1">{t("signatureHint")}</span>
       </Field>
 
       <fieldset className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 space-y-4">

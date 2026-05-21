@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { setRequestLocale, getTranslations, getFormatter } from "next-intl/server";
+import { DashboardChatInput } from "../_components/DashboardChatInput";
 import {
   getTodayTokenUsage,
   getTodaySentCount,
@@ -108,6 +109,8 @@ export default async function DashboardPage({
 
   return (
     <div className="space-y-10">
+      <DashboardChatInput />
+
       <section>
         <h1 className="text-2xl font-semibold mb-6">{t("title")}</h1>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

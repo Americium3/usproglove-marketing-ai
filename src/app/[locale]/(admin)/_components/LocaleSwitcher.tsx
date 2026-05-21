@@ -6,7 +6,8 @@ import { routing } from "@/i18n/routing";
 
 const LABEL: Record<(typeof routing.locales)[number], string> = {
   en: "EN",
-  zh: "中",
+  zh: "简",
+  "zh-TW": "繁",
 };
 
 export function LocaleSwitcher() {

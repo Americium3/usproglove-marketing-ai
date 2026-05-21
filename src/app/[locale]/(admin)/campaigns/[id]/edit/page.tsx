@@ -48,6 +48,7 @@ export default async function EditCampaignPage({
           senderEmail: c.senderEmail,
           senderName: c.senderName,
           replyToEmail: c.replyToEmail,
+          signatureText: c.signatureText ?? "",
           icp: parseIcp(c.icp),
         }}
       />

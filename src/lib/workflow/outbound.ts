@@ -57,6 +57,7 @@ export interface OutboundContext {
   senderEmail: string;
   senderName: string;
   replyToEmail: string;
+  signatureText?: string | null;
   campaignId: string;
   mode?: OutboundMode;
   icp?: IcpConfig | Record<string, unknown> | null;
@@ -417,6 +418,7 @@ export async function runOutboundStep(ctx: OutboundContext) {
         draft: draft.object,
         sender,
         recipient: { email: contact.email, firstName: contact.firstName, lastName: contact.lastName },
+        signatureOverride: ctx.signatureText ? { text: ctx.signatureText } : undefined,
       });
 
       if (mode === "preview") {

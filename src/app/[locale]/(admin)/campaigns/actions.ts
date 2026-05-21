@@ -23,6 +23,7 @@ const BaseCampaignSchema = z.object({
   senderEmail: z.email(),
   senderName: z.string().min(1).max(120),
   replyToEmail: z.email(),
+  signatureText: z.string().max(2000).optional(),
   status: z.enum(STATUSES as unknown as [string, ...string[]]),
 });
 
@@ -68,6 +69,8 @@ function icpFromForm(formData: FormData): IcpConfig | null {
 }
 
 function parseBase(formData: FormData) {
+  const rawSig = formData.get("signatureText");
+  const signatureText = typeof rawSig === "string" && rawSig.trim() ? rawSig.trim() : undefined;
   return BaseCampaignSchema.safeParse({
     name: formData.get("name"),
     vertical: formData.get("vertical"),
@@ -77,6 +80,7 @@ function parseBase(formData: FormData) {
     senderEmail: formData.get("senderEmail"),
     senderName: formData.get("senderName"),
     replyToEmail: formData.get("replyToEmail"),
+    signatureText,
     status: formData.get("status"),
   });
 }
@@ -111,6 +115,7 @@ export async function createCampaign(
     senderEmail: v.senderEmail,
     senderName: v.senderName,
     replyToEmail: v.replyToEmail,
+    signatureText: v.signatureText ?? null,
     icp: icp ?? null,
   });
 

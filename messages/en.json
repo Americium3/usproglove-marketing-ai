@@ -10,12 +10,73 @@
     "replies": "Replies",
     "content": "Content",
     "cron": "Cron",
+    "social": "Social",
+    "ads": "Ads",
+    "knowledge": "Knowledge",
     "faq": "FAQ",
     "settings": "Settings"
   },
   "faq": {
     "title": "Frequently asked questions",
     "subtitle": "How the marketing agent works, what to expect, how to troubleshoot."
+  },
+  "assistant": {
+    "triggerLabel": "Ask AI",
+    "open": "Open assistant",
+    "close": "Close assistant",
+    "title": "Marketing AI assistant",
+    "subtitle": "Answers questions, researches prospects, drafts copy",
+    "inputPlaceholder": "Ask anything — prospecting, copy, metrics, research…",
+    "send": "Send",
+    "thinking": "Thinking…",
+    "error": "Error",
+    "sources": "Sources",
+    "emptyPrompt": "Ask me anything about the agent or your market.",
+    "suggestion1": "Research competitors in the US nitrile glove market",
+    "suggestion2": "Draft an ICP for dental clinics in Texas",
+    "suggestion3": "Suggest 3 subject lines for tattoo studios",
+    "dashboardTitle": "Ask the assistant",
+    "dashboardSubtitle": "Web-search-enabled. Cmd+Enter to send.",
+    "dashboardPlaceholder": "e.g. what's the latest FDA rule change on exam gloves? Or: suggest an ICP for nail salons in NYC"
+  },
+  "social": {
+    "title": "Social media",
+    "phase": "Phase 3",
+    "description": "Connect LinkedIn, Instagram, Facebook, X and TikTok. Compose, schedule, and repurpose campaign content across platforms.",
+    "plannedModules": "Planned modules",
+    "modules": {
+      "accounts": "OAuth-connect accounts per platform",
+      "compose": "Multi-platform post composer with AI assist",
+      "schedule": "Scheduling queue with per-platform optimal times",
+      "repurpose": "Repurpose outbound content into social posts",
+      "analytics": "Engagement analytics + reply routing into the inbox"
+    }
+  },
+  "ads": {
+    "title": "Ad management",
+    "phase": "Phase 3",
+    "description": "Google Ads and Meta Ads: creative generation, budget control, and attribution back to prospects and revenue.",
+    "plannedModules": "Planned modules",
+    "modules": {
+      "accounts": "Connect Google Ads + Meta Ads accounts",
+      "creatives": "AI-generated ad copy and image prompts per vertical",
+      "campaigns": "Launch, pause, and adjust campaigns from the dashboard",
+      "budget": "Daily and monthly budget caps with alerting",
+      "attribution": "Click-to-prospect-to-revenue attribution"
+    }
+  },
+  "knowledge": {
+    "title": "Knowledge base",
+    "phase": "Phase 2",
+    "description": "Internal knowledge store: product specs, buyer personas, FAQ responses, compliance docs. Retrieved by the AI assistant and the outbound drafter.",
+    "plannedModules": "Planned modules",
+    "modules": {
+      "documents": "Upload PDFs, MDX, and URLs; chunk and embed",
+      "personas": "Buyer persona library per vertical",
+      "responses": "Canned responses for common objections",
+      "retrieval": "Semantic retrieval in drafting + assistant context",
+      "training": "Feedback loop from replies to improve drafts"
+    }
   },
   "auth": {
     "signIn": "Sign in",
@@ -81,6 +142,9 @@
       "senderEmail": "Sender email",
       "senderName": "Sender name",
       "replyToEmail": "Reply-to email",
+      "signatureText": "Email signature",
+      "signaturePlaceholder": "—\nJay Lin\nFounder, USProGlove\njay.lin@usproglove.us\nhttps://usproglove.us",
+      "signatureHint": "Appended to every sent email. Plain text — HTML version is auto-generated. Leave empty to use the global default from env.",
       "submit": "Create campaign",
       "update": "Save changes",
       "saving": "Saving…",
