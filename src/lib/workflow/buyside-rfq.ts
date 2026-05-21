@@ -16,6 +16,9 @@ import { renderRfqTouch, TOUCH_CADENCE_DAYS, type TouchKind } from "@/../content
 import { personalizeForRecipient } from "@/lib/buyside/personalize";
 import { gatherProspectResearch, renderResearchForPrompt } from "@/lib/buyside/research";
 
+export type SendCohort = "A" | "B" | "C";
+export const SEND_COHORTS: SendCohort[] = ["A", "B", "C"];
+
 export interface BuysideContext {
   campaignId: string;
   senderEmail: string;
@@ -28,6 +31,24 @@ export interface BuysideContext {
    * Defaults to true. Set false for a fully deterministic static run.
    */
   personalize?: boolean;
+  /**
+   * Send-time A/B cohort. When set, only prospects in this cohort are sent to.
+   * When undefined, all cohorts fire (used for one-shot manual sends).
+   */
+  cohort?: SendCohort;
+}
+
+/**
+ * Deterministic cohort assignment from prospect ID. Same prospect always
+ * lands in the same bucket, so reply attribution stays stable across the
+ * 3-touch sequence even if cohort metadata wasn't pre-persisted.
+ */
+export function cohortForProspectId(prospectId: string): SendCohort {
+  let h = 0;
+  for (let i = 0; i < prospectId.length; i++) {
+    h = (h * 31 + prospectId.charCodeAt(i)) >>> 0;
+  }
+  return SEND_COHORTS[h % SEND_COHORTS.length];
 }
 
 export interface BuysideResultItem {
@@ -184,6 +205,17 @@ export async function runBuysideRfq(ctx: BuysideContext): Promise<BuysideSummary
   for (const p of prospects) {
     if (sentCount >= ctx.dailyCap) break;
 
+    // A/B send-time test: when a cohort is requested, only its prospects fire.
+    // Cohort is deterministic from prospectId so the same prospect always
+    // lands in the same bucket across the 3-touch sequence.
+    if (ctx.cohort) {
+      const myCohort = cohortForProspectId(p.id);
+      if (myCohort !== ctx.cohort) {
+        // not this cohort's turn — neither counted as "skipped" nor processed
+        continue;
+      }
+    }
+
     // Skip if replied / suppressed / bounced / unsubscribed
     if (
       p.status === "replied" ||
@@ -300,6 +332,7 @@ export async function runBuysideRfq(ctx: BuysideContext): Promise<BuysideSummary
     }
 
     try {
+      const prospectCohort = cohortForProspectId(p.id);
       const sent = await sendEmail({
         to: {
           email: p.email,
@@ -310,7 +343,11 @@ export async function runBuysideRfq(ctx: BuysideContext): Promise<BuysideSummary
         subject: rendered.subject,
         textContent: rendered.textBody,
         htmlContent: rendered.htmlBody,
-        tags: [`campaign:${ctx.campaignId}`, `buyside:${action}`],
+        tags: [
+          `campaign:${ctx.campaignId}`,
+          `buyside:${action}`,
+          `cohort:${prospectCohort}`,
+        ],
       });
 
       await db.insert(schema.messages).values({

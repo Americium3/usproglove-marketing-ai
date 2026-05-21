@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { sendEmail } from "@/lib/email/brevo";
-import { runBuysideRfq, type BuysideSummary } from "@/lib/workflow/buyside-rfq";
+import {
+  runBuysideRfq,
+  SEND_COHORTS,
+  type BuysideSummary,
+  type SendCohort,
+} from "@/lib/workflow/buyside-rfq";
 import { trackCronRun, inferTrigger } from "@/lib/cron/tracker";
 
 export const dynamic = "force-dynamic";
@@ -19,13 +24,34 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const dryRun = searchParams.get("dry") === "1";
 
+  // Cohort selection — A/B send-time test.
+  //   ?cohort=A|B|C → fire only that cohort
+  //   ?cohort=all   → fire all prospects regardless of cohort (one-shot)
+  //   (none)        → derive cohort from current UTC hour:
+  //                   11→A, 14→B, 1→C, otherwise "all" (manual safe default)
+  const rawCohort = (searchParams.get("cohort") ?? "").toUpperCase();
+  let cohort: SendCohort | undefined;
+  if (rawCohort === "ALL") {
+    cohort = undefined;
+  } else if ((SEND_COHORTS as string[]).includes(rawCohort)) {
+    cohort = rawCohort as SendCohort;
+  } else {
+    const hourUtc = new Date().getUTCHours();
+    cohort = hourUtc === 11 ? "A" : hourUtc === 14 ? "B" : hourUtc === 1 ? "C" : undefined;
+  }
+
   const summary = await trackCronRun("buyside-rfq", inferTrigger(request), async () => {
     const campaigns = await db
       .select()
       .from(schema.campaigns)
       .where(and(eq(schema.campaigns.vertical, "supplier"), eq(schema.campaigns.status, "active")));
 
-    const runs: Array<{ campaignId: string; name: string; summary?: BuysideSummary; error?: string }> = [];
+    const runs: Array<{
+      campaignId: string;
+      name: string;
+      summary?: BuysideSummary;
+      error?: string;
+    }> = [];
     for (const c of campaigns) {
       try {
         const result = await runBuysideRfq({
@@ -35,6 +61,7 @@ export async function GET(request: Request) {
           replyToEmail: c.replyToEmail,
           dailyCap: c.dailyCap,
           dryRun,
+          cohort,
         });
         runs.push({ campaignId: c.id, name: c.name, summary: result });
       } catch (err) {
@@ -45,13 +72,14 @@ export async function GET(request: Request) {
     // Send the report unless this was a dry-run probe.
     if (!dryRun && runs.length > 0) {
       try {
-        await sendReport(runs);
+        await sendReport(runs, cohort);
       } catch (err) {
         console.error("[buyside-rfq] report send failed", err);
       }
     }
 
     return {
+      cohort: cohort ?? "all",
       campaignsProcessed: campaigns.length,
       runs: runs.map((r) => ({
         campaignId: r.campaignId,
@@ -72,7 +100,9 @@ export async function GET(request: Request) {
 
 async function sendReport(
   runs: Array<{ campaignId: string; name: string; summary?: BuysideSummary; error?: string }>,
+  cohort: SendCohort | undefined,
 ) {
+  const cohortLabel = cohort ? `cohort ${cohort}` : "all cohorts";
   // Report comes from the same buy-side identity that the RFQs go from, so
   // replies to the report thread (e.g. ops notes from Jay) stay on usproglove.com.
   const fromEmail = process.env.BUYSIDE_SENDER_EMAIL ?? "jay.lin@usproglove.com";
@@ -142,11 +172,11 @@ async function sendReport(
     `);
   }
 
-  const subject = `Buyside RFQ — ${today}: ${totalSent} sent, ${totalReplies} new repl${totalReplies === 1 ? "y" : "ies"}`;
-  const textBody = `US Pro Glove — Buyside RFQ daily report (${today})\n\n${lines.join("\n")}`;
+  const subject = `Buyside RFQ — ${today} [${cohortLabel}]: ${totalSent} sent, ${totalReplies} new repl${totalReplies === 1 ? "y" : "ies"}`;
+  const textBody = `US Pro Glove — Buyside RFQ report (${today}, ${cohortLabel})\n\n${lines.join("\n")}`;
   const htmlBody = `
     <div style="font:14px/1.5 system-ui,Segoe UI,Arial;color:#111">
-      <h2 style="margin:0 0 4px">Buyside RFQ — daily report</h2>
+      <h2 style="margin:0 0 4px">Buyside RFQ — ${cohortLabel}</h2>
       <p style="margin:0 0 16px;color:#666">${today}</p>
       <p style="margin:0 0 20px">Total: <b>${totalSent}</b> emails sent · <b>${totalReplies}</b> new replies</p>
       ${htmlSections.join("\n")}

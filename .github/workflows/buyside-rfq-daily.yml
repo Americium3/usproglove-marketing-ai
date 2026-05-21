@@ -2,22 +2,42 @@ name: Buyside RFQ — Daily
 
 # Daily nitrile-glove sourcing pipeline:
 #   - Sends initial RFQ + follow-ups (D+0 / D+3 / D+7 cadence) to supplier contacts
-#   - Emails a summary report to jay.lin@usproglove.com
+#   - AI-personalizes each email (Vercel AI Gateway → Haiku 4.5) using public
+#     web research per recipient (Serper)
+#   - Emails a summary report to jay.lin@usproglove.com after each cohort run
+#
+# A/B SEND-TIME TEST
+#   Three schedules fire daily, each hitting one cohort:
+#     11:00 UTC = 07:00 ET — cohort A  (EU late morning + Asia EOD)
+#     14:00 UTC = 10:00 ET — cohort B  (US morning + EU late afternoon)
+#     01:00 UTC = 21:00 ET — cohort C  (Asia next-morning)
+#   The cron endpoint derives the cohort from the current UTC hour, so each
+#   schedule sends only to its ~7-prospect slice.
 #
 # This replaces the QStash schedule for buyside-rfq; all other cron jobs
 # (outbound, reply-poll, content-publish, usage-snapshot) remain on QStash.
 #
 # Required repo secrets (Settings → Secrets and variables → Actions):
 #   APP_BASE_URL  — public https URL of the production deploy
-#                   (e.g. https://usproglove-marketing-ai.vercel.app)
 #   CRON_SECRET   — same value set in Vercel env; used as Bearer auth
 
 on:
   schedule:
-    # 14:30 UTC daily ≈ 07:30 Pacific / 22:30 China — lands in suppliers' morning.
-    - cron: "30 14 * * *"
+    - cron: "0 11 * * *"  # cohort A
+    - cron: "0 14 * * *"  # cohort B
+    - cron: "0 1  * * *"  # cohort C
   workflow_dispatch:
     inputs:
+      cohort:
+        description: "Cohort (A / B / C / all). Default = derive from UTC hour."
+        type: choice
+        default: ""
+        options:
+          - ""
+          - "A"
+          - "B"
+          - "C"
+          - "all"
       dry_run:
         description: "Dry-run (no emails sent, no DB writes for messages)"
         type: boolean
@@ -46,15 +66,28 @@ jobs:
           APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           DRY_RUN: ${{ inputs.dry_run }}
+          MANUAL_COHORT: ${{ inputs.cohort }}
         run: |
           set -euo pipefail
-          QS=""
+
+          # Build the query string. Manual dispatch can override cohort; for
+          # scheduled fires, the server derives the cohort from the UTC hour.
+          QS_PARTS=()
           if [ "${DRY_RUN:-false}" = "true" ]; then
-            QS="?dry=1"
+            QS_PARTS+=("dry=1")
             echo "::notice::Dry-run mode — no emails will be sent"
           fi
+          if [ -n "${MANUAL_COHORT:-}" ]; then
+            QS_PARTS+=("cohort=${MANUAL_COHORT}")
+            echo "::notice::Manual cohort override: ${MANUAL_COHORT}"
+          fi
+          QS=""
+          if [ ${#QS_PARTS[@]} -gt 0 ]; then
+            QS="?$(IFS='&'; echo "${QS_PARTS[*]}")"
+          fi
+
           URL="${APP_BASE_URL%/}/api/cron/buyside-rfq${QS}"
-          echo "POST $URL"
+          echo "GET $URL  (UTC hour: $(date -u +%H))"
 
           # 60s connect + 5min total — the route has maxDuration=300.
           HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
