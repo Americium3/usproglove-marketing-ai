@@ -6,6 +6,7 @@ export const CRON_JOBS = [
   "reply-poll",
   "content-publish",
   "usage-snapshot",
+  "buyside-rfq",
 ] as const;
 
 export type CronJob = (typeof CRON_JOBS)[number];

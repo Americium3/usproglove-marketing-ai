@@ -13,6 +13,7 @@
     "db:migrate": "tsx --env-file=.env.local scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "seed:campaign": "tsx --env-file=.env.local scripts/seed-campaign.ts",
+    "seed:buyside": "tsx --env-file=.env.local scripts/seed-buyside-rfq.ts",
     "snapshot:run": "tsx --env-file=.env.local scripts/run-snapshot.ts",
     "qstash:setup": "tsx --env-file=.env.local scripts/setup-qstash-schedules.ts",
     "cron:test": "tsx --env-file=.env.local scripts/test-cron.ts",

@@ -15,6 +15,27 @@
       "when": 1776756228414,
       "tag": "0001_violet_thaddeus_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776759345637,
+      "tag": "0002_brainy_leader",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776797927771,
+      "tag": "0003_bent_masque",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779343000000,
+      "tag": "0004_add_supplier_vertical",
+      "breakpoints": true
     }
   ]
 }

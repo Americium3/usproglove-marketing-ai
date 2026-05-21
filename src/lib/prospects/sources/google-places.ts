@@ -14,6 +14,10 @@ const verticalToQuery: Record<Vertical, { text: string; types?: string[] }> = {
   janitorial: { text: "cleaning service", types: ["establishment"] },
   cannabis: { text: "cannabis dispensary", types: ["store"] },
   veterinary: { text: "veterinary clinic", types: ["veterinary_care"] },
+  // Buy-side suppliers are sourced via Apollo, not Google Places — this entry
+  // exists only to satisfy the exhaustive Record<Vertical> type. Discovery for
+  // vertical="supplier" must be filtered out before reaching this source.
+  supplier: { text: "" },
 };
 
 export const googlePlacesSource: DiscoverySource = {

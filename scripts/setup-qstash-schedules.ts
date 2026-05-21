@@ -27,6 +27,10 @@ const schedules = [
   { name: "reply-poll", cron: "*/15 * * * *", path: "/api/cron/reply-poll" },
   { name: "content-publish", cron: "0 9 * * *", path: "/api/cron/content-publish" },
   { name: "usage-snapshot", cron: "0 0 * * *", path: "/api/cron/usage-snapshot" },
+  // buyside-rfq is intentionally NOT here — it runs from GitHub Actions
+  // (.github/workflows/buyside-rfq-daily.yml). Keep this list as the single
+  // source of truth for QStash; do not re-add buyside-rfq unless you also
+  // disable the GitHub workflow, otherwise both will fire daily.
 ];
 
 async function main() {

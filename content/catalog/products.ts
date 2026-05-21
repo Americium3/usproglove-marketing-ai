@@ -8,7 +8,8 @@ export type Vertical =
   | "agriculture"
   | "janitorial"
   | "cannabis"
-  | "veterinary";
+  | "veterinary"
+  | "supplier";
 
 export type GloveColor = "IB" | "CB" | "BK" | "WT" | "PK";
 export type Size = "XS" | "S" | "M" | "L" | "XL";
@@ -158,6 +159,9 @@ export const heroSkuByVertical: Record<Vertical, string> = {
   janitorial: "3.0",
   cannabis: "3.5-black",
   veterinary: "3.5-ice-blue",
+  // "supplier" is a buy-side pseudo-vertical (sourcing nitrile from manufacturers);
+  // the hero-SKU concept doesn't apply, but the schema requires a value.
+  supplier: "3.0",
 };
 
 export const skuPattern = /^US(IB|CB|BK|WT|PK)(\d{2})(\d)(\d{2})$/;

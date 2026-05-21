@@ -1,0 +1,81 @@
+name: Buyside RFQ — Daily
+
+# Daily nitrile-glove sourcing pipeline:
+#   - Sends initial RFQ + follow-ups (D+0 / D+3 / D+7 cadence) to supplier contacts
+#   - Emails a summary report to jay.lin@usproglove.com
+#
+# This replaces the QStash schedule for buyside-rfq; all other cron jobs
+# (outbound, reply-poll, content-publish, usage-snapshot) remain on QStash.
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   APP_BASE_URL  — public https URL of the production deploy
+#                   (e.g. https://usproglove-marketing-ai.vercel.app)
+#   CRON_SECRET   — same value set in Vercel env; used as Bearer auth
+
+on:
+  schedule:
+    # 14:30 UTC daily ≈ 07:30 Pacific / 22:30 China — lands in suppliers' morning.
+    - cron: "30 14 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry-run (no emails sent, no DB writes for messages)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: buyside-rfq
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify required secrets
+        run: |
+          if [ -z "${{ secrets.APP_BASE_URL }}" ]; then
+            echo "::error::APP_BASE_URL secret is not set"; exit 1
+          fi
+          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "::error::CRON_SECRET secret is not set"; exit 1
+          fi
+
+      - name: Trigger /api/cron/buyside-rfq
+        env:
+          APP_BASE_URL: ${{ secrets.APP_BASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          QS=""
+          if [ "${DRY_RUN:-false}" = "true" ]; then
+            QS="?dry=1"
+            echo "::notice::Dry-run mode — no emails will be sent"
+          fi
+          URL="${APP_BASE_URL%/}/api/cron/buyside-rfq${QS}"
+          echo "POST $URL"
+
+          # 60s connect + 5min total — the route has maxDuration=300.
+          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
+            --max-time 330 --connect-timeout 60 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "$URL")
+
+          echo "HTTP $HTTP_CODE"
+          cat response.json | head -c 4000
+          echo ""
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Cron endpoint returned non-200 ($HTTP_CODE)"
+            exit 1
+          fi
+
+      - name: Upload response artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buyside-response-${{ github.run_id }}
+          path: response.json
+          retention-days: 14
+          if-no-files-found: ignore

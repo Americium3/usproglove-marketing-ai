@@ -11,9 +11,23 @@ export const verticalEnum = pgEnum("vertical", [
   "janitorial",
   "cannabis",
   "veterinary",
+  "supplier",
 ]);
 
 export const campaignStatusEnum = pgEnum("campaign_status", ["draft", "active", "paused", "archived"]);
+export const dealStageEnum = pgEnum("deal_stage", [
+  "lead",
+  "qualified",
+  "opportunity",
+  "customer",
+  "closed_lost",
+]);
+export const crmTaskStatusEnum = pgEnum("crm_task_status", [
+  "open",
+  "done",
+  "snoozed",
+  "cancelled",
+]);
 export const prospectStatusEnum = pgEnum("prospect_status", [
   "discovered",
   "enriching",
@@ -46,6 +60,8 @@ export const companies = pgTable(
     rating: integer("rating"),
     reviewCount: integer("review_count"),
     discoverySourceId: varchar("discovery_source_id", { length: 32 }).notNull(),
+    dealStage: dealStageEnum("deal_stage").default("lead").notNull(),
+    background: text("background"),
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
@@ -53,6 +69,7 @@ export const companies = pgTable(
   (t) => ({
     verticalIdx: index("companies_vertical_idx").on(t.vertical),
     regionIdx: index("companies_region_idx").on(t.region),
+    dealStageIdx: index("companies_deal_stage_idx").on(t.dealStage),
   }),
 );
 
@@ -94,6 +111,7 @@ export const campaigns = pgTable("campaigns", {
   senderEmail: text("sender_email").notNull(),
   senderName: text("sender_name").notNull(),
   replyToEmail: text("reply_to_email").notNull(),
+  signatureText: text("signature_text"),
   startsAt: timestamp("starts_at", { withTimezone: true }),
   endsAt: timestamp("ends_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
@@ -221,6 +239,47 @@ export const usageSnapshots = pgTable(
   (t) => ({
     kindIdx: index("usage_snapshots_kind_idx").on(t.kind),
     createdIdx: index("usage_snapshots_created_idx").on(t.createdAt),
+  }),
+);
+
+export const crmNotes = pgTable(
+  "crm_notes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    companyId: uuid("company_id").references(() => companies.id, { onDelete: "cascade" }).notNull(),
+    prospectId: uuid("prospect_id").references(() => prospects.id, { onDelete: "set null" }),
+    authorEmail: text("author_email").notNull(),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    companyIdx: index("crm_notes_company_idx").on(t.companyId),
+    prospectIdx: index("crm_notes_prospect_idx").on(t.prospectId),
+    createdIdx: index("crm_notes_created_idx").on(t.createdAt),
+  }),
+);
+
+export const crmTasks = pgTable(
+  "crm_tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    companyId: uuid("company_id").references(() => companies.id, { onDelete: "cascade" }).notNull(),
+    prospectId: uuid("prospect_id").references(() => prospects.id, { onDelete: "set null" }),
+    title: text("title").notNull(),
+    body: text("body"),
+    status: crmTaskStatusEnum("status").default("open").notNull(),
+    dueAt: timestamp("due_at", { withTimezone: true }),
+    assigneeEmail: text("assignee_email"),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdByEmail: text("created_by_email").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    companyIdx: index("crm_tasks_company_idx").on(t.companyId),
+    prospectIdx: index("crm_tasks_prospect_idx").on(t.prospectId),
+    statusDueIdx: index("crm_tasks_status_due_idx").on(t.status, t.dueAt),
   }),
 );
 

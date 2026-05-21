@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { runOutboundStep } from "@/lib/workflow/outbound";
 import { trackCronRun, inferTrigger } from "@/lib/cron/tracker";
@@ -14,7 +14,14 @@ export async function GET(request: Request) {
   }
 
   const summary = await trackCronRun("outbound", inferTrigger(request), async () => {
-    const active = await db.select().from(schema.campaigns).where(eq(schema.campaigns.status, "active"));
+    // Sell-side cron: skip vertical="supplier" — those campaigns are driven by
+    // the dedicated buyside-rfq cron and use a different runner / template flow.
+    const active = await db
+      .select()
+      .from(schema.campaigns)
+      .where(
+        and(eq(schema.campaigns.status, "active"), ne(schema.campaigns.vertical, "supplier")),
+      );
     const runs: Array<{ campaignId: string; sent?: number; error?: string }> = [];
     let sentTotal = 0;
     let errored = 0;

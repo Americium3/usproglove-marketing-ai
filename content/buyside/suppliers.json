@@ -1,0 +1,377 @@
+{
+  "ammex.com": {
+    "supplier": "AMMEX Corporation",
+    "domain": "ammex.com",
+    "country": "United States",
+    "contacts": [
+      {
+        "firstName": "Keyo",
+        "lastName": "Gold",
+        "name": "Keyo Gold",
+        "title": "CEO",
+        "email": "kgold@ammex.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/keyo-gold-22750a1b"
+      },
+      {
+        "firstName": "Michael",
+        "lastName": "Sharp",
+        "name": "Michael Sharp",
+        "title": "Vice President of Business Development",
+        "email": "msharp@ammex.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/michael-sharp-361a3a17"
+      }
+    ]
+  },
+  "hycare-int.com": {
+    "supplier": "Hycare International Co., Ltd",
+    "domain": "hycare-int.com",
+    "country": "Thailand",
+    "contacts": []
+  },
+  "ppeconsultants.net": {
+    "supplier": "Nitrile Gloves",
+    "domain": "ppeconsultants.net",
+    "country": "United States",
+    "contacts": []
+  },
+  "dashmedical.com": {
+    "supplier": "DASH Medical Gloves",
+    "domain": "dashmedical.com",
+    "country": "United States",
+    "contacts": [
+      {
+        "firstName": "Jeff",
+        "lastName": "Christensen",
+        "name": "Jeff Christensen",
+        "title": "President/CEO",
+        "email": "jchristensen@dashmedical.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/jeff-christensen-92424a14"
+      },
+      {
+        "firstName": "Mike",
+        "lastName": "Schoen",
+        "name": "Mike Schoen",
+        "title": "Vice President of Business Development",
+        "email": "mschoen@dashmedical.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/mike-schoen-4157298"
+      }
+    ]
+  },
+  "innovativegloves.net": {
+    "supplier": "Innovative Gloves Co., Ltd.",
+    "domain": "innovativegloves.net",
+    "country": "Thailand",
+    "contacts": [
+      {
+        "firstName": "Rajeev",
+        "lastName": "Sood",
+        "name": "Rajeev Sood",
+        "title": "President & CEO",
+        "email": "rsood@innovativeglove.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/rajeev-sood-71742315"
+      }
+    ]
+  },
+  "smcgloves.com": {
+    "supplier": "Shamrock Manufacturing Co. Inc.,",
+    "domain": "smcgloves.com",
+    "country": "United States",
+    "contacts": [
+      {
+        "firstName": "Jane",
+        "lastName": "Laurence",
+        "name": "Jane Laurence",
+        "title": "Business Development Manager",
+        "email": "jane@smcgloves.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/janelaurence"
+      }
+    ]
+  },
+  "konnamedical.com": {
+    "supplier": "Konna Medical Instrument",
+    "domain": "konnamedical.com",
+    "country": "China",
+    "contacts": []
+  },
+  "enliva.co.in": {
+    "supplier": "Wadi Surgicals (ENLIVA)",
+    "domain": "enliva.co.in",
+    "country": "India",
+    "contacts": []
+  },
+  "comfort-rubber.com.my": {
+    "supplier": "COMFORT RUBBER GLOVES INDUSTRIES SDN. BHD.",
+    "domain": "comfort-rubber.com.my",
+    "country": "Malaysia",
+    "contacts": []
+  },
+  "aureliagloves.co.uk": {
+    "supplier": "Supermax Healthcare UK & Europe",
+    "domain": "aureliagloves.co.uk",
+    "country": "United Kingdom",
+    "contacts": [
+      {
+        "firstName": "George",
+        "lastName": "Holliday",
+        "name": "George Holliday",
+        "title": "Area Sales Manager",
+        "email": "george.holliday@supermax.co.uk",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/george-holliday-6a329428b"
+      },
+      {
+        "firstName": "George",
+        "lastName": "Toon",
+        "name": "George Toon",
+        "title": "Area Sales Manager",
+        "email": "george.toon@supermax.co.uk",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/george-toon-49b69b184"
+      }
+    ]
+  },
+  "nulife.co.in": {
+    "supplier": "Nulife",
+    "domain": "nulife.co.in",
+    "country": "India",
+    "contacts": [
+      {
+        "firstName": "Sachin",
+        "lastName": "Ingawale",
+        "name": "Sachin Ingawale",
+        "title": "Export Manager",
+        "email": "sachin@mrkhealthcare.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/sachin-ingawale-58a414258"
+      }
+    ]
+  },
+  "unigloves.com": {
+    "supplier": "Unigloves | B Corp\u2122",
+    "domain": "unigloves.com",
+    "country": "United Kingdom",
+    "contacts": [
+      {
+        "firstName": "Celine",
+        "lastName": "Tripp",
+        "name": "Celine Tripp",
+        "title": "Business Development Manager",
+        "email": "celine.tripp@unigloves.co.uk",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/celine-tripp-44309b78"
+      },
+      {
+        "firstName": "Lynsey",
+        "lastName": "Jarratt",
+        "name": "Lynsey Jarratt",
+        "title": "Area Sales Manager",
+        "email": "lynsey.jarratt@unigloves.co.uk",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/lynsey-jarratt-656366100"
+      }
+    ]
+  },
+  "halyardhealth.eu": {
+    "supplier": "O&M Halyard EMEA",
+    "domain": "halyardhealth.eu",
+    "country": "Belgium",
+    "contacts": [
+      {
+        "firstName": "Marilyne",
+        "lastName": "Berry",
+        "name": "Marilyne Berry",
+        "title": "Business Development Manager France Southern Europe & East Med",
+        "email": "marilyne.berry@hyh.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/marilyne-berry-83482a8"
+      },
+      {
+        "firstName": "Jana",
+        "lastName": "Komarova",
+        "name": "Jana Komarova",
+        "title": "Senior CS Specialist Controlled Environment & Export",
+        "email": "jana.komarova@hyh.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/jana-komarova"
+      }
+    ]
+  },
+  "agmdsafety.com": {
+    "supplier": "AGMD Group",
+    "domain": "agmdsafety.com",
+    "country": "Canada",
+    "contacts": [
+      {
+        "firstName": "Rubani",
+        "lastName": "Bagga",
+        "name": "Rubani Bagga",
+        "title": "Director of Business Development",
+        "email": "rubani@agmdgroup.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/rubani-bagga"
+      }
+    ]
+  },
+  "banshimedicare.com": {
+    "supplier": "Banshi Medicare Pvt. Ltd.",
+    "domain": "banshimedicare.com",
+    "country": "India",
+    "contacts": []
+  },
+  "unimedicalhealthcare.com": {
+    "supplier": "UNI-MEDICAL\u00ae",
+    "domain": "unimedicalhealthcare.com",
+    "country": "United Kingdom",
+    "contacts": [
+      {
+        "firstName": "Celine",
+        "lastName": "Tripp",
+        "name": "Celine Tripp",
+        "title": "Business Development Manager",
+        "email": "celine.tripp@unigloves.co.uk",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/celine-tripp-44309b78"
+      },
+      {
+        "firstName": "Lynsey",
+        "lastName": "Jarratt",
+        "name": "Lynsey Jarratt",
+        "title": "Area Sales Manager",
+        "email": "lynsey.jarratt@unigloves.co.uk",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/lynsey-jarratt-656366100"
+      }
+    ]
+  },
+  "arkamedical.eu": {
+    "supplier": "ARKA Medical",
+    "domain": "arkamedical.eu",
+    "country": "Portugal",
+    "contacts": [
+      {
+        "firstName": "Pedro",
+        "lastName": "Menezes",
+        "name": "Pedro Menezes",
+        "title": "CEO",
+        "email": "pedro.menezes@arkamedical.eu",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/pedro-menezes-48353aa"
+      },
+      {
+        "firstName": "Rita",
+        "lastName": "Pereira",
+        "name": "Rita Pereira",
+        "title": "Commercial Director",
+        "email": "rita.pereira@arkamedical.eu",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/rita-pereira-b4480413"
+      }
+    ]
+  },
+  "rubberex.com.my": {
+    "supplier": "Hextar Healthcare Bhd (formerly known as Rubberex Malaysia)",
+    "domain": "rubberex.com.my",
+    "country": "Malaysia",
+    "contacts": []
+  },
+  "pidegreegroup.com": {
+    "supplier": "Pidegree Medical",
+    "domain": "pidegreegroup.com",
+    "country": "China",
+    "contacts": []
+  },
+  "theglovecompany.com.au": {
+    "supplier": "The Glove Company",
+    "domain": "theglovecompany.com.au",
+    "country": "Australia",
+    "contacts": [
+      {
+        "firstName": "Don",
+        "lastName": "Hutcherson",
+        "name": "Don Hutcherson",
+        "title": "Business Development Manager",
+        "email": "don.hutcherson@theglovecompany.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/donhutcherson"
+      },
+      {
+        "firstName": "Barry",
+        "lastName": "Watson",
+        "name": "Barry Watson",
+        "title": "Business Development Manager",
+        "email": "barry.watson@theglovecompany.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/barry-watson-8531a1a"
+      }
+    ]
+  },
+  "3aglove.com": {
+    "supplier": "3A Glove Sdn Bhd",
+    "domain": "3aglove.com",
+    "country": "Malaysia",
+    "contacts": [
+      {
+        "firstName": "Jasmine",
+        "lastName": "Chu",
+        "name": "Jasmine Chu",
+        "title": "Sales and Marketing Executive",
+        "email": "jasmine.chu@3aglove.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/jasmine-chu-03a529265"
+      }
+    ]
+  },
+  "eamedicalvitals.com": {
+    "supplier": "East African Medical Vitals",
+    "domain": "eamedicalvitals.com",
+    "country": "Uganda",
+    "contacts": [
+      {
+        "firstName": "Rogers",
+        "lastName": "Kayanga",
+        "name": "Rogers Kayanga",
+        "title": "Territory Sales Manager",
+        "email": "rogers.kayanga@eamedicalvitals.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/rogers-kayanga-72398659"
+      }
+    ]
+  },
+  "eagleprotect.com": {
+    "supplier": "Eagle Protect PBC",
+    "domain": "eagleprotect.com",
+    "country": "United States",
+    "contacts": [
+      {
+        "firstName": "Steve",
+        "lastName": "Ardagh",
+        "name": "Steve Ardagh",
+        "title": "CEO/Founder",
+        "email": "stevea@eagleprotect.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/steveardagh"
+      },
+      {
+        "firstName": "Lynda",
+        "lastName": "Ronaldson",
+        "name": "Lynda Ronaldson",
+        "title": "CMO and Founder",
+        "email": "lynda@eagleprotect.com",
+        "emailStatus": "verified",
+        "linkedin": "http://www.linkedin.com/in/lynda-ronaldson-a4052220"
+      }
+    ]
+  },
+  "unimed.com.sa": {
+    "supplier": "UNIMED",
+    "domain": "unimed.com.sa",
+    "country": "Saudi Arabia",
+    "contacts": []
+  }
+}
