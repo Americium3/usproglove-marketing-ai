@@ -201,6 +201,11 @@
         "description": "Pull replies from the IMAP mailbox and match them to prospects to advance the outbound workflow",
         "schedule": "every 15 min"
       },
+      "buyside-rfq": {
+        "name": "Buyside RFQ",
+        "description": "Send daily nitrile-glove RFQs and follow-ups to supplier contacts; A/B/C cohorts test send-time performance",
+        "schedule": "Daily 11:00 / 14:00 / 01:00 UTC (cohorts A / B / C)"
+      },
       "content-publish": {
         "name": "Content publishing",
         "description": "Release scheduled SEO and content pieces whose publish time has arrived",

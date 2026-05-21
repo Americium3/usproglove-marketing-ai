@@ -201,6 +201,11 @@
         "description": "從 IMAP 信箱拉取回覆並比對至潛客，繼續推進外聯流程",
         "schedule": "每 15 分鐘"
       },
+      "buyside-rfq": {
+        "name": "買方詢價 RFQ",
+        "description": "每日向供應商聯絡人寄送丁腈手套詢價與跟進，按 A/B/C 三批做寄送時段對照",
+        "schedule": "每日 UTC 11:00 / 14:00 / 01:00（A/B/C 批次）"
+      },
       "content-publish": {
         "name": "內容發布",
         "description": "發布到達預定時間的 SEO / 內容項目",
