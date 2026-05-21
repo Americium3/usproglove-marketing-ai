@@ -201,6 +201,11 @@
         "description": "从 IMAP 邮箱拉取回复并匹配到潜客，继续推进外联流程",
         "schedule": "每 15 分钟"
       },
+      "buyside-rfq": {
+        "name": "买方询价 RFQ",
+        "description": "每日向供应商联系人发送丁腈手套询价与跟进，按 A/B/C 三批做发送时段对照",
+        "schedule": "每日 UTC 11:00 / 14:00 / 01:00（A/B/C 批次）"
+      },
       "content-publish": {
         "name": "内容发布",
         "description": "发布到达预定时间的 SEO / 内容条目",
