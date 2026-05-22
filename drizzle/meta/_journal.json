@@ -36,6 +36,13 @@
       "when": 1779343000000,
       "tag": "0004_add_supplier_vertical",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779405460318,
+      "tag": "0005_absent_sandman",
+      "breakpoints": true
     }
   ]
 }

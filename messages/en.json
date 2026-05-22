@@ -67,15 +67,46 @@
   },
   "knowledge": {
     "title": "Knowledge base",
-    "phase": "Phase 2",
-    "description": "Internal knowledge store: product specs, buyer personas, FAQ responses, compliance docs. Retrieved by the AI assistant and the outbound drafter.",
-    "plannedModules": "Planned modules",
-    "modules": {
-      "documents": "Upload PDFs, MDX, and URLs; chunk and embed",
-      "personas": "Buyer persona library per vertical",
-      "responses": "Canned responses for common objections",
-      "retrieval": "Semantic retrieval in drafting + assistant context",
-      "training": "Feedback loop from replies to improve drafts"
+    "description": "Internal knowledge store: product specs, buyer personas, FAQ language, objection responses, compliance docs. The AI assistant retrieves from this when answering or drafting.",
+    "migration": {
+      "title": "Database migration pending",
+      "body": "The knowledge_sources / knowledge_chunks tables and the pgvector extension haven't been applied yet. Run the migration to enable this page:"
+    },
+    "form": {
+      "title": "Add knowledge source",
+      "fields": {
+        "title": "Title",
+        "kind": "Kind",
+        "vertical": "Vertical (optional)",
+        "verticalAny": "Any",
+        "category": "Category (optional)",
+        "sourceUrl": "Source URL (optional)",
+        "content": "Content"
+      },
+      "placeholders": {
+        "title": "e.g. Nitrile glove spec — 4g, FDA 510(k), ASTM D6319",
+        "category": "product-spec / persona / objection / compliance / faq",
+        "content": "Paste plain text or MDX. Will be chunked and embedded automatically."
+      },
+      "submit": "Ingest and embed",
+      "submitting": "Embedding…",
+      "created": "Created with {count} chunks"
+    },
+    "list": {
+      "title": "Sources",
+      "empty": "No sources yet. Add one above to start populating the knowledge base.",
+      "columns": {
+        "title": "Title",
+        "kind": "Kind",
+        "vertical": "Vertical",
+        "category": "Category",
+        "chunks": "Chunks",
+        "created": "Created"
+      },
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "deleteFailed": "Delete failed",
+      "confirmDelete": "Delete \"{title}\" and all its chunks?"
     }
   },
   "auth": {

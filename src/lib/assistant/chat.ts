@@ -7,6 +7,7 @@ import { checkAdmin } from "@/lib/auth/admin";
 import { webSearch } from "@/lib/search/serper";
 import { db, schema } from "@/lib/db";
 import { estimateCostUsd } from "@/lib/ai/pricing";
+import { retrieveChunks } from "@/lib/knowledge/retrieve";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -34,10 +35,10 @@ Context:
 
 Rules:
 - Respond in the user's language (Chinese if they ask in Chinese, English otherwise).
-- When the user asks about current events, companies, competitors, industry stats, or anything time-sensitive, call the web_search tool.
+- When asked about USProGlove's products, certifications, buyer personas, objection handling, FAQ language, or any curated internal knowledge, call knowledge_search FIRST. Prefer internal knowledge over guessing.
+- For current events, companies, competitors, industry stats, or anything time-sensitive, call web_search.
 - Keep answers tight. Use bullets or short paragraphs, not walls of text.
 - Never invent facts about real businesses, products, prices, or people. If unsure, say so or search.
-- If the user asks about platform features or internal data, answer from general knowledge of the system architecture — you cannot query the DB directly.
 - Do not mention internal vendor names (Hunter, Snov, Brevo, Apollo, Serper) in user-facing answers. Refer to them by role: "email enrichment", "email delivery", "web search".`;
 
 export async function sendAssistantMessage(args: {
@@ -83,6 +84,42 @@ export async function sendAssistantMessage(args: {
                 snippet: r.snippet,
               })),
             };
+          },
+        }),
+        knowledge_search: tool({
+          description:
+            "Semantic search over the internal USProGlove knowledge base (product specs, buyer personas, FAQ language, compliance notes, objection responses, curated company knowledge). Use BEFORE web_search whenever the question is about USProGlove itself, its products, or how to talk to its target verticals. Optional vertical filter narrows results to one industry (tattoo, beauty, restaurant, medical, industrial, automotive, agriculture, janitorial, cannabis, veterinary, supplier).",
+          inputSchema: z.object({
+            query: z.string().min(2).max(400).describe("the question or topic to retrieve"),
+            vertical: z
+              .enum(schema.verticalEnum.enumValues)
+              .optional()
+              .describe("restrict to a single industry vertical"),
+            k: z.number().int().min(1).max(10).optional().describe("how many chunks to return (default 5)"),
+          }),
+          execute: async ({ query, vertical, k }) => {
+            try {
+              const chunks = await retrieveChunks(query, { vertical, k: k ?? 5 });
+              for (const c of chunks.slice(0, 5)) {
+                citations.push({
+                  title: c.sourceTitle,
+                  link: `/knowledge#${c.sourceId}`,
+                  snippet: c.text.slice(0, 240),
+                });
+              }
+              return {
+                matched: chunks.length,
+                chunks: chunks.map((c) => ({
+                  title: c.sourceTitle,
+                  vertical: c.vertical,
+                  category: c.category,
+                  text: c.text,
+                  similarity: Number(c.similarity.toFixed(3)),
+                })),
+              };
+            } catch (err) {
+              return { matched: 0, chunks: [], error: (err as Error).message };
+            }
           },
         }),
       },

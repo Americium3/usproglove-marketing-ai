@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, text, varchar, integer, timestamp, jsonb, uuid, boolean, index, numeric } from "drizzle-orm/pg-core";
+import { pgTable, pgEnum, text, varchar, integer, timestamp, jsonb, uuid, boolean, index, numeric, vector } from "drizzle-orm/pg-core";
 
 export const verticalEnum = pgEnum("vertical", [
   "tattoo",
@@ -302,5 +302,64 @@ export const cronRuns = pgTable(
   (t) => ({
     jobStartedIdx: index("cron_runs_job_started_idx").on(t.job, t.startedAt),
     startedIdx: index("cron_runs_started_idx").on(t.startedAt),
+  }),
+);
+
+// ─── Knowledge base (Phase 2) ────────────────────────────────────────────────
+//
+// Knowledge sources are user-uploaded references the AI can retrieve when
+// drafting outreach or answering operator questions. Each source is split into
+// ~500-token chunks; each chunk gets a 1536-dim embedding (OpenAI text-embedding-3-small
+// via Vercel AI Gateway) and is indexed with pgvector HNSW for cosine ANN search.
+//
+// MVP scope: `text` and `mdx` kinds — paste content directly. URL/PDF kinds
+// reserved in the enum so future ingestion paths can add rows without a schema
+// migration.
+
+export const knowledgeSourceKindEnum = pgEnum("knowledge_source_kind", [
+  "text",
+  "mdx",
+  "url",
+  "pdf",
+]);
+
+export const knowledgeSources = pgTable(
+  "knowledge_sources",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    title: text("title").notNull(),
+    kind: knowledgeSourceKindEnum("kind").notNull().default("text"),
+    vertical: verticalEnum("vertical"),
+    category: varchar("category", { length: 64 }),
+    sourceUrl: text("source_url"),
+    rawContent: text("raw_content").notNull(),
+    createdBy: text("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    verticalIdx: index("knowledge_sources_vertical_idx").on(t.vertical),
+    categoryIdx: index("knowledge_sources_category_idx").on(t.category),
+  }),
+);
+
+export const knowledgeChunks = pgTable(
+  "knowledge_chunks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    sourceId: uuid("source_id")
+      .references(() => knowledgeSources.id, { onDelete: "cascade" })
+      .notNull(),
+    ord: integer("ord").notNull(),
+    text: text("text").notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    sourceIdx: index("knowledge_chunks_source_idx").on(t.sourceId),
+    embeddingIdx: index("knowledge_chunks_embedding_idx").using(
+      "hnsw",
+      t.embedding.op("vector_cosine_ops"),
+    ),
   }),
 );

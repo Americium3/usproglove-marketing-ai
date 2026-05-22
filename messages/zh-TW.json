@@ -67,15 +67,46 @@
   },
   "knowledge": {
     "title": "知識庫",
-    "phase": "第二階段",
-    "description": "內部知識儲存：產品規格、買家畫像、FAQ 話術、合規文件。AI 助手與外聯草擬流程自動擷取",
-    "plannedModules": "規劃模組",
-    "modules": {
-      "documents": "上傳 PDF、MDX、URL，自動切塊與向量化",
-      "personas": "依垂直行業的買家畫像庫",
-      "responses": "常見異議的標準話術",
-      "retrieval": "草擬與助手對話時自動語意檢索",
-      "training": "依據回覆資料持續優化草擬品質"
+    "description": "內部知識儲存：產品規格、買家畫像、FAQ 話術、異議應對、合規文件。AI 助手回答問題與起草外聯時會自動檢索。",
+    "migration": {
+      "title": "資料庫遷移尚未執行",
+      "body": "knowledge_sources / knowledge_chunks 資料表與 pgvector 擴充功能尚未建立。請執行遷移以啟用此頁面："
+    },
+    "form": {
+      "title": "新增知識來源",
+      "fields": {
+        "title": "標題",
+        "kind": "類型",
+        "vertical": "行業（可選）",
+        "verticalAny": "不限",
+        "category": "分類（可選）",
+        "sourceUrl": "來源 URL（可選）",
+        "content": "內容"
+      },
+      "placeholders": {
+        "title": "例：丁腈手套規格 — 4 克, FDA 510(k), ASTM D6319",
+        "category": "product-spec / persona / objection / compliance / faq",
+        "content": "貼上純文字或 MDX。系統會自動切塊與向量化。"
+      },
+      "submit": "入庫並建立向量",
+      "submitting": "建立向量中…",
+      "created": "已建立，共 {count} 個切片"
+    },
+    "list": {
+      "title": "已收錄",
+      "empty": "尚無知識來源。上方表單提交後將顯示於此。",
+      "columns": {
+        "title": "標題",
+        "kind": "類型",
+        "vertical": "行業",
+        "category": "分類",
+        "chunks": "切片數",
+        "created": "建立時間"
+      },
+      "delete": "刪除",
+      "deleting": "刪除中…",
+      "deleteFailed": "刪除失敗",
+      "confirmDelete": "刪除「{title}」及其所有切片？"
     }
   },
   "auth": {
