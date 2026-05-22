@@ -382,15 +382,121 @@
   },
   "content": {
     "title": "内容与 SEO 引擎",
-    "phase": "第二阶段",
-    "description": "按行业垂直领域生成关键词集群、长文稿、页面 SEO 与定时发布",
-    "plannedModules": "计划模块",
-    "modules": {
-      "clusters": "各垂直行业关键词集群",
-      "drafts": "AI 生成长文稿",
-      "seo": "页面 SEO 与 JSON-LD 结构化数据",
-      "schedule": "定时发布队列",
-      "internalLinks": "与外联落地页内链互通"
+    "description": "按行业生成关键词集群、写作大纲、AI 长文、页面 SEO、定时发布与内链编织。",
+    "backToList": "返回内容列表",
+    "nav": {
+      "clusters": "关键词集群",
+      "newPiece": "+ 新建文章（手动）"
+    },
+    "list": {
+      "title": "全部文章",
+      "empty": "暂无文章。可以在上方生成关键词集群，或手动创建一篇。",
+      "columns": {
+        "title": "标题",
+        "status": "状态",
+        "vertical": "行业",
+        "locale": "语言",
+        "words": "字数",
+        "links": "内链",
+        "scheduled": "定时",
+        "updated": "更新于"
+      }
+    },
+    "audit": {
+      "title": "内链审计",
+      "topInbound": "被链最多",
+      "orphans": "孤儿文章（已发布但无任何内链指入）",
+      "orphansClean": "没有孤儿——每篇已发布文章至少被链接过一次。",
+      "empty": "暂无数据。"
+    },
+    "cluster": {
+      "title": "生成关键词集群",
+      "hint": "输入一个种子词，AI 将按搜索意图扩展成若干集群，每个集群对应一篇可写的文章。",
+      "seedPlaceholder": "例如：tattoo gloves",
+      "generate": "生成",
+      "generating": "生成中…",
+      "preview": "{count} 个集群——取消勾选不想保存的。",
+      "saveChosen": "保存 {count} 个集群",
+      "discard": "丢弃"
+    },
+    "clusters": {
+      "title": "关键词集群",
+      "description": "已保存的集群。可一键生成大纲并 AI 起草整篇文章。",
+      "empty": "尚无已保存集群。",
+      "columns": {
+        "name": "集群",
+        "vertical": "行业",
+        "intent": "意图",
+        "terms": "词数",
+        "briefs": "大纲",
+        "created": "创建于"
+      },
+      "draftButton": "大纲 → 起草",
+      "running": "执行中…",
+      "delete": "删除",
+      "deleteConfirm": "删除此集群？已生成的大纲会保留。"
+    },
+    "new": {
+      "title": "标题",
+      "description": "不走 AI 生成，自己写一篇。后续仍可运行 SEO 与内链编织。",
+      "heroSkuId": "主推 SKU id（可选）",
+      "keywords": "关键词（逗号分隔）",
+      "excerpt": "摘要（可选，作为 meta description 兜底）",
+      "body": "MDX 正文",
+      "create": "创建草稿",
+      "creating": "创建中…",
+      "heading": "新建文章（手动）"
+    },
+    "editor": {
+      "title": "标题",
+      "excerpt": "摘要",
+      "body": "正文（MDX）",
+      "heroSkuId": "主推 SKU id",
+      "keywords": "关键词（逗号分隔）",
+      "seoTitle": "SEO 标题",
+      "seoDescription": "SEO 描述",
+      "save": "保存",
+      "saving": "保存中…",
+      "savedToast": "已保存。",
+      "regenSeo": "重新生成 SEO meta",
+      "seoToast": "SEO meta 已重生成。",
+      "weaveButton": "编织内链",
+      "weaveToast": "已插入内链。",
+      "publishNow": "立即发布",
+      "publishToast": "已发布。",
+      "scheduleButton": "定时",
+      "scheduledToast": "已设定时。",
+      "unpublish": "撤回发布",
+      "unpublishToast": "已撤回。",
+      "delete": "删除文章",
+      "deleteConfirm": "确认永久删除这篇文章？",
+      "stats": {
+        "words": "字",
+        "internalLinks": "内链",
+        "externalLinks": "外链"
+      },
+      "regenSection": {
+        "title": "重写某一段",
+        "headingPlaceholder": "精确小节标题（例：\"为何 5 mil 更适合纹身\"）",
+        "instructionPlaceholder": "可选指令（例：\"加一段讲 chemo 认证\"）",
+        "button": "重写该节"
+      },
+      "regenToast": "该节已重写。",
+      "sidebar": {
+        "meta": "元信息",
+        "seo": "SEO",
+        "links": "内链",
+        "publish": "发布",
+        "danger": "危险操作"
+      }
+    },
+    "links": {
+      "title": "链接图谱",
+      "inbound": "入链 ({count})",
+      "outbound": "出链 ({count})",
+      "noInbound": "暂无其它文章指向本篇。",
+      "noOutbound": "本篇暂无内链。",
+      "hubReference": "行业 Hub: {url}"
     }
   },
   "verticals": {
@@ -404,5 +510,14 @@
     "janitorial": "清洁 / 保洁",
     "cannabis": "大麻行业",
     "veterinary": "兽医"
+  },
+  "public": {
+    "nav": {
+      "industries": "行业",
+      "blog": "博客"
+    },
+    "footer": {
+      "tagline": "工业级丁腈手套——工厂直供。"
+    }
   }
 }

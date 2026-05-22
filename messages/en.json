@@ -382,15 +382,121 @@
   },
   "content": {
     "title": "Content & SEO engine",
-    "phase": "Phase 2",
-    "description": "Keyword clusters, long-form drafts, on-page SEO, scheduled publishing — per vertical.",
-    "plannedModules": "Planned modules",
-    "modules": {
-      "clusters": "Keyword clusters per vertical",
-      "drafts": "AI-generated long-form drafts",
-      "seo": "On-page SEO + JSON-LD",
-      "schedule": "Scheduled publish queue",
-      "internalLinks": "Cross-link to outbound landing pages"
+    "description": "Keyword clusters, briefs, long-form drafts, on-page SEO, scheduled publishing, internal linking — per vertical.",
+    "backToList": "Back to content",
+    "nav": {
+      "clusters": "Keyword clusters",
+      "newPiece": "+ New piece (manual)"
+    },
+    "list": {
+      "title": "All pieces",
+      "empty": "No pieces yet. Generate keyword clusters above or create one manually.",
+      "columns": {
+        "title": "Title",
+        "status": "Status",
+        "vertical": "Vertical",
+        "locale": "Locale",
+        "words": "Words",
+        "links": "Internal",
+        "scheduled": "Scheduled",
+        "updated": "Updated"
+      }
+    },
+    "audit": {
+      "title": "Link audit",
+      "topInbound": "Top inbound (most linked-to)",
+      "orphans": "Orphan published pieces (no inbound links)",
+      "orphansClean": "No orphans — every published piece has at least one inbound link.",
+      "empty": "No data yet."
+    },
+    "cluster": {
+      "title": "Generate keyword cluster",
+      "hint": "Enter a seed term; the AI expands it into intent-grouped clusters you can save as future articles.",
+      "seedPlaceholder": "e.g. tattoo gloves",
+      "generate": "Generate",
+      "generating": "Generating…",
+      "preview": "{count} cluster(s) — uncheck any you don't want.",
+      "saveChosen": "Save {count} cluster(s)",
+      "discard": "Discard"
+    },
+    "clusters": {
+      "title": "Keyword clusters",
+      "description": "Saved clusters. Generate a brief + AI draft from any cluster in one click.",
+      "empty": "No saved clusters yet.",
+      "columns": {
+        "name": "Cluster",
+        "vertical": "Vertical",
+        "intent": "Intent",
+        "terms": "Terms",
+        "briefs": "Briefs",
+        "created": "Created"
+      },
+      "draftButton": "Brief → Draft",
+      "running": "Running…",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this cluster? Existing briefs are kept."
+    },
+    "new": {
+      "title": "Title",
+      "description": "Skip AI generation and write a piece by hand. You can still run SEO + link weaving later.",
+      "heroSkuId": "Hero SKU id (optional)",
+      "keywords": "Keywords (comma-separated)",
+      "excerpt": "Excerpt (optional, used as meta description fallback)",
+      "body": "Body MDX",
+      "create": "Create draft",
+      "creating": "Creating…",
+      "heading": "New piece (manual)"
+    },
+    "editor": {
+      "title": "Title",
+      "excerpt": "Excerpt",
+      "body": "Body (MDX)",
+      "heroSkuId": "Hero SKU id",
+      "keywords": "Keywords (comma-separated)",
+      "seoTitle": "SEO title",
+      "seoDescription": "SEO description",
+      "save": "Save",
+      "saving": "Saving…",
+      "savedToast": "Saved.",
+      "regenSeo": "Regenerate SEO meta",
+      "seoToast": "SEO meta regenerated.",
+      "weaveButton": "Weave internal links",
+      "weaveToast": "Internal links inserted.",
+      "publishNow": "Publish now",
+      "publishToast": "Published.",
+      "scheduleButton": "Schedule",
+      "scheduledToast": "Scheduled.",
+      "unpublish": "Unpublish",
+      "unpublishToast": "Unpublished.",
+      "delete": "Delete piece",
+      "deleteConfirm": "Delete this piece permanently?",
+      "stats": {
+        "words": "words",
+        "internalLinks": "internal links",
+        "externalLinks": "external links"
+      },
+      "regenSection": {
+        "title": "Regenerate one section",
+        "headingPlaceholder": "exact section heading (e.g. \"Why 5 mil matters\")",
+        "instructionPlaceholder": "optional instruction (e.g. \"add a paragraph about chemo certification\")",
+        "button": "Regenerate section"
+      },
+      "regenToast": "Section regenerated.",
+      "sidebar": {
+        "meta": "Metadata",
+        "seo": "SEO",
+        "links": "Internal links",
+        "publish": "Publish",
+        "danger": "Danger zone"
+      }
+    },
+    "links": {
+      "title": "Link graph",
+      "inbound": "Inbound ({count})",
+      "outbound": "Outbound ({count})",
+      "noInbound": "No other piece links here yet.",
+      "noOutbound": "This piece has no internal links yet.",
+      "hubReference": "Vertical hub: {url}"
     }
   },
   "verticals": {
@@ -404,5 +510,14 @@
     "janitorial": "Cleaning / janitorial",
     "cannabis": "Cannabis",
     "veterinary": "Veterinary"
+  },
+  "public": {
+    "nav": {
+      "industries": "Industries",
+      "blog": "Blog"
+    },
+    "footer": {
+      "tagline": "B2B nitrile gloves — direct from manufacturer."
+    }
   }
 }

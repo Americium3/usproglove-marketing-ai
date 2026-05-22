@@ -160,21 +160,7 @@ export const events = pgTable(
   }),
 );
 
-export const contentPieces = pgTable("content_pieces", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  slug: varchar("slug", { length: 128 }).notNull().unique(),
-  vertical: verticalEnum("vertical").notNull(),
-  locale: varchar("locale", { length: 8 }).notNull(),
-  title: text("title").notNull(),
-  description: text("description"),
-  bodyMdx: text("body_mdx").notNull(),
-  heroSkuId: varchar("hero_sku_id", { length: 32 }),
-  keywords: jsonb("keywords").$type<string[]>(),
-  published: boolean("published").default(false).notNull(),
-  publishedAt: timestamp("published_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+// `contentPieces` is defined further down (Phase 2.4 extended shape).
 
 export const suppressions = pgTable("suppressions", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -361,5 +347,147 @@ export const knowledgeChunks = pgTable(
       "hnsw",
       t.embedding.op("vector_cosine_ops"),
     ),
+  }),
+);
+
+// ─── Content & SEO engine (Phase 2.4) ────────────────────────────────────────
+//
+// A keyword cluster groups a seed term ("tattoo gloves") into related search
+// queries (head + long-tail + question intent). One cluster typically becomes
+// one article. A brief is the structured outline + KB citations consumed by the
+// drafter; a piece is the final article body + SEO + status row.
+
+export const contentStatusEnum = pgEnum("content_status", [
+  "draft",
+  "ready",
+  "scheduled",
+  "published",
+  "archived",
+]);
+export const contentIntentEnum = pgEnum("content_intent", [
+  "informational",
+  "commercial",
+  "transactional",
+  "navigational",
+]);
+export const clusterTermKindEnum = pgEnum("cluster_term_kind", [
+  "head",
+  "long_tail",
+  "question",
+]);
+
+export const keywordClusters = pgTable(
+  "keyword_clusters",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    vertical: verticalEnum("vertical").notNull(),
+    seedTerm: text("seed_term").notNull(),
+    name: text("name").notNull(),
+    intent: contentIntentEnum("intent").notNull().default("informational"),
+    terms: jsonb("terms")
+      .$type<Array<{ term: string; kind: "head" | "long_tail" | "question"; volume?: number | null }>>()
+      .notNull(),
+    notes: text("notes"),
+    createdBy: text("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    verticalIdx: index("keyword_clusters_vertical_idx").on(t.vertical),
+    seedIdx: index("keyword_clusters_seed_idx").on(t.seedTerm),
+  }),
+);
+
+export const contentBriefs = pgTable(
+  "content_briefs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    clusterId: uuid("cluster_id").references(() => keywordClusters.id, { onDelete: "set null" }),
+    vertical: verticalEnum("vertical").notNull(),
+    locale: varchar("locale", { length: 8 }).notNull().default("en"),
+    title: text("title").notNull(),
+    audience: text("audience"),
+    intent: contentIntentEnum("intent").notNull().default("informational"),
+    targetKeywords: jsonb("target_keywords").$type<string[]>().notNull().default([]),
+    outline: jsonb("outline")
+      .$type<Array<{ heading: string; bullets: string[]; kbCitations?: Array<{ sourceId: string; ord: number }> }>>()
+      .notNull(),
+    faqs: jsonb("faqs").$type<Array<{ q: string; a: string }>>().notNull().default([]),
+    ctaSkuId: varchar("cta_sku_id", { length: 32 }),
+    createdBy: text("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    verticalIdx: index("content_briefs_vertical_idx").on(t.vertical),
+    clusterIdx: index("content_briefs_cluster_idx").on(t.clusterId),
+  }),
+);
+
+// Phase 2.4 extends the original content_pieces table with status, SEO,
+// scheduling, JSON-LD, and link-audit columns. The legacy `published` boolean
+// is preserved and mirrored from the status enum for back-compat; new code
+// should read `status`.
+export const contentPieces = pgTable(
+  "content_pieces",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    slug: varchar("slug", { length: 128 }).notNull().unique(),
+    vertical: verticalEnum("vertical").notNull(),
+    locale: varchar("locale", { length: 8 }).notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    bodyMdx: text("body_mdx").notNull(),
+    heroSkuId: varchar("hero_sku_id", { length: 32 }),
+    keywords: jsonb("keywords").$type<string[]>(),
+    published: boolean("published").default(false).notNull(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+
+    // Phase 2.4 additions
+    status: contentStatusEnum("status").default("draft").notNull(),
+    clusterId: uuid("cluster_id").references(() => keywordClusters.id, { onDelete: "set null" }),
+    briefId: uuid("brief_id").references(() => contentBriefs.id, { onDelete: "set null" }),
+    excerpt: text("excerpt"),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+    canonicalUrl: text("canonical_url"),
+    ogImageUrl: text("og_image_url"),
+    jsonLd: jsonb("json_ld").$type<Record<string, unknown> | null>(),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
+    wordCount: integer("word_count").default(0).notNull(),
+    internalLinkCount: integer("internal_link_count").default(0).notNull(),
+    externalLinkCount: integer("external_link_count").default(0).notNull(),
+    lastLinkedAt: timestamp("last_linked_at", { withTimezone: true }),
+    intent: contentIntentEnum("intent").default("informational").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    statusIdx: index("content_pieces_status_idx").on(t.status),
+    scheduledIdx: index("content_pieces_scheduled_idx").on(t.scheduledAt),
+    verticalLocaleIdx: index("content_pieces_vertical_locale_idx").on(t.vertical, t.locale),
+  }),
+);
+
+// Internal-link graph: one row per (source piece → target piece) link inserted
+// by the weaver. Lets us answer "who links to X?" and find orphans.
+export const contentLinks = pgTable(
+  "content_links",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    fromPieceId: uuid("from_piece_id")
+      .references(() => contentPieces.id, { onDelete: "cascade" })
+      .notNull(),
+    toPieceId: uuid("to_piece_id").references(() => contentPieces.id, {
+      onDelete: "cascade",
+    }),
+    toUrl: text("to_url").notNull(),
+    anchorText: text("anchor_text").notNull(),
+    kind: varchar("kind", { length: 32 }).notNull().default("internal"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    fromIdx: index("content_links_from_idx").on(t.fromPieceId),
+    toIdx: index("content_links_to_idx").on(t.toPieceId),
   }),
 );

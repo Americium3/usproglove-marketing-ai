@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { trackCronRun, inferTrigger } from "@/lib/cron/tracker";
+import { publishDuePieces } from "@/lib/content/publish";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 export async function GET(request: Request) {
   const auth = request.headers.get("authorization");
@@ -10,8 +12,8 @@ export async function GET(request: Request) {
   }
 
   const summary = await trackCronRun("content-publish", inferTrigger(request), async () => {
-    // TODO: publish any scheduled content_pieces whose publishedAt <= now
-    return { published: 0 };
+    const { published } = await publishDuePieces();
+    return { published: published.length, items: published };
   });
   return NextResponse.json({ ok: true, ...summary });
 }
