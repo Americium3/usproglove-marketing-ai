@@ -17,9 +17,9 @@ interface SourceRow {
   createdAt: Date;
 }
 
-async function fetchSources(): Promise<{ rows: SourceRow[]; missingTable: boolean }> {
+async function fetchSources(): Promise<SourceRow[]> {
   try {
-    const rows = await db
+    return await db
       .select({
         id: schema.knowledgeSources.id,
         title: schema.knowledgeSources.title,
@@ -37,11 +37,10 @@ async function fetchSources(): Promise<{ rows: SourceRow[]; missingTable: boolea
       )
       .groupBy(schema.knowledgeSources.id)
       .orderBy(desc(schema.knowledgeSources.createdAt));
-    return { rows, missingTable: false };
   } catch (err) {
     const msg = (err as Error).message || "";
     if (/relation .* does not exist|knowledge_sources/i.test(msg)) {
-      return { rows: [], missingTable: true };
+      return [];
     }
     throw err;
   }
@@ -57,7 +56,7 @@ export default async function KnowledgePage({
   const t = await getTranslations("knowledge");
   const format = await getFormatter();
 
-  const { rows, missingTable } = await fetchSources();
+  const { rows } = await fetchSources();
 
   return (
     <div className="space-y-8">
@@ -65,15 +64,6 @@ export default async function KnowledgePage({
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-neutral-600 dark:text-neutral-400 mt-1 max-w-2xl">{t("description")}</p>
       </div>
-
-      {missingTable && (
-        <div className="rounded-md border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-amber-900 dark:text-amber-200">
-          <strong>{t("migration.title")}</strong> — {t("migration.body")}
-          <code className="block mt-2 px-2 py-1 bg-amber-100 dark:bg-amber-950/60 rounded text-xs">
-            pnpm tsx --env-file=.env.local scripts/migrate.ts
-          </code>
-        </div>
-      )}
 
       <KnowledgeForm
         verticals={schema.verticalEnum.enumValues}

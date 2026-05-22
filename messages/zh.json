@@ -68,10 +68,6 @@
   "knowledge": {
     "title": "知识库",
     "description": "内部知识存储：产品参数、买家画像、FAQ 话术、异议应对、合规文档。AI 助手回答问题和起草外联时会自动检索。",
-    "migration": {
-      "title": "数据库迁移未执行",
-      "body": "knowledge_sources / knowledge_chunks 表和 pgvector 扩展还没创建。运行迁移命令以启用该页面："
-    },
     "form": {
       "title": "新增知识源",
       "fields": {

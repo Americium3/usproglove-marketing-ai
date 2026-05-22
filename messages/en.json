@@ -68,10 +68,6 @@
   "knowledge": {
     "title": "Knowledge base",
     "description": "Internal knowledge store: product specs, buyer personas, FAQ language, objection responses, compliance docs. The AI assistant retrieves from this when answering or drafting.",
-    "migration": {
-      "title": "Database migration pending",
-      "body": "The knowledge_sources / knowledge_chunks tables and the pgvector extension haven't been applied yet. Run the migration to enable this page:"
-    },
     "form": {
       "title": "Add knowledge source",
       "fields": {

@@ -68,10 +68,6 @@
   "knowledge": {
     "title": "知識庫",
     "description": "內部知識儲存：產品規格、買家畫像、FAQ 話術、異議應對、合規文件。AI 助手回答問題與起草外聯時會自動檢索。",
-    "migration": {
-      "title": "資料庫遷移尚未執行",
-      "body": "knowledge_sources / knowledge_chunks 資料表與 pgvector 擴充功能尚未建立。請執行遷移以啟用此頁面："
-    },
     "form": {
       "title": "新增知識來源",
       "fields": {
