@@ -1,18 +1,20 @@
+**Language:** **English** · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md)
+
 # USProGlove Marketing AI
 
 Next.js + Drizzle (PostgreSQL with pgvector) + Vercel AI Gateway. Admin dashboard for outbound campaigns, a buy-side sourcing pipeline, and an internal knowledge base with semantic retrieval.
 
-## 本地部署步骤
+## Local setup
 
-### 0. 前置依赖
+### 0. Prerequisites
 
-- Node.js 20+（推荐用 `nvm`）
-- `pnpm`（`npm i -g pnpm`）
-- PostgreSQL 16+，**必须装 `pgvector` 扩展**（知识库依赖）
-  - Neon / Supabase 这类托管 PG 已自带，开个项目即可
-  - 本机自建：`CREATE EXTENSION IF NOT EXISTS vector;`
+- Node.js 20+ (recommend `nvm`)
+- `pnpm` (`npm i -g pnpm`)
+- PostgreSQL 16+ with the **`pgvector` extension installed** (required by the knowledge base)
+  - Managed Postgres (Neon, Supabase, etc.) usually ships with it
+  - Self-hosted: `CREATE EXTENSION IF NOT EXISTS vector;`
 
-### 1. 克隆 & 安装
+### 1. Clone & install
 
 ```bash
 git clone https://github.com/Americium3/usproglove-marketing-ai.git
@@ -20,65 +22,65 @@ cd usproglove-marketing-ai
 pnpm install
 ```
 
-### 2. 配置环境变量
+### 2. Configure environment variables
 
-在仓库根目录创建 `.env.local`。完整 key 列表问账号所有者拿（涉及 Auth0 / Brevo / Hunter / Snov / Google Places / AI Gateway 等密钥）。至少要有：
+Create `.env.local` in the repo root. Ask the account owner for the full list (Auth0, Brevo, Hunter, Snov, Google Places, AI Gateway, etc.). At minimum:
 
 ```
-DATABASE_URL=postgres://...           # 必须是支持 pgvector 的 PG
-AI_GATEWAY_API_KEY=...                # Vercel AI Gateway，用于 embedding 和 LLM
+DATABASE_URL=postgres://...           # must be a pgvector-capable Postgres
+AI_GATEWAY_API_KEY=...                # Vercel AI Gateway, for embeddings and LLMs
 AUTH0_SECRET=...
 AUTH0_BASE_URL=http://localhost:3000
 AUTH0_ISSUER_BASE_URL=...
 AUTH0_CLIENT_ID=...
 AUTH0_CLIENT_SECRET=...
-ADMIN_EMAILS=your@email.com           # 逗号分隔，决定谁能进 /dashboard
+ADMIN_EMAILS=your@email.com           # comma-separated, controls access to /dashboard
 ```
 
-### 3. **迁移数据库**（首次部署 / schema 更新后必跑）
+### 3. **Run database migrations** (required on first setup, and after any schema change)
 
 ```bash
 pnpm db:migrate
 ```
 
-该命令读取 `.env.local` 里的 `DATABASE_URL`，依次执行 `drizzle/` 下的 SQL 迁移。如果是全新空库，会建出所有表（含 `knowledge_sources` / `knowledge_chunks` + HNSW 向量索引）。
+Reads `DATABASE_URL` from `.env.local` and applies every SQL file under `drizzle/`. On a fresh database this creates all tables, including `knowledge_sources` / `knowledge_chunks` plus the HNSW vector index.
 
-**注意**：
+Notes:
 
-- 如果 `pgvector` 扩展没装，迁移会在创建 `vector(1536)` 列时报错——先 `CREATE EXTENSION vector;`
-- 改了 `src/lib/db/schema.ts` 之后要先 `pnpm db:generate` 生成新的迁移文件，再 `pnpm db:migrate` 应用
-- 用 `pnpm db:studio` 可以打开图形化界面看表
+- If `pgvector` is not installed, the migration will fail when creating the `vector(1536)` column — run `CREATE EXTENSION vector;` first.
+- After editing `src/lib/db/schema.ts`, run `pnpm db:generate` to produce a new migration file, then `pnpm db:migrate` to apply it.
+- `pnpm db:studio` opens a GUI for browsing the database.
 
-### 4. 启动开发服务器
+### 4. Start the dev server
 
 ```bash
 pnpm dev
 ```
 
-打开 http://localhost:3000，用 `ADMIN_EMAILS` 里的邮箱登录 Auth0，进 `/dashboard`。
+Open http://localhost:3000 and sign in via Auth0 with an address listed in `ADMIN_EMAILS` to reach `/dashboard`.
 
-### 5. （可选）填测试数据
+### 5. (Optional) Seed sample data
 
 ```bash
-pnpm seed:campaign       # 一条示例营销 campaign
-pnpm seed:buyside        # buy-side RFQ pipeline 示例
+pnpm seed:campaign       # one example outbound campaign
+pnpm seed:buyside        # buy-side RFQ pipeline sample
 ```
 
-## 常用命令
+## Common scripts
 
-| 命令 | 用途 |
+| Command | Purpose |
 | --- | --- |
-| `pnpm dev` | 启动开发服务器 |
-| `pnpm build` | 生产构建 |
-| `pnpm typecheck` | TypeScript 检查 |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Production build |
+| `pnpm typecheck` | TypeScript check |
 | `pnpm lint` | ESLint |
-| `pnpm db:generate` | 由 schema 变更生成新迁移 SQL |
-| `pnpm db:migrate` | 把迁移应用到数据库 |
-| `pnpm db:push` | （慎用）直接 push schema 到 DB，跳过迁移文件 |
-| `pnpm db:studio` | 打开 drizzle-kit 的可视化数据库工具 |
+| `pnpm db:generate` | Generate a new migration from schema changes |
+| `pnpm db:migrate` | Apply pending migrations to the database |
+| `pnpm db:push` | (Use with caution) push schema directly, bypassing migration files |
+| `pnpm db:studio` | Open the drizzle-kit visual DB browser |
 
-## 部署到 Vercel
+## Deploying to Vercel
 
-- 仓库连到 Vercel，环境变量在 Vercel 项目设置里逐个配置（同 `.env.local`）
-- 每次 push 自动构建
-- 生产数据库的迁移：用 `pnpm db:migrate`（指向生产 `DATABASE_URL`）手动跑一次，或挂到 GitHub Actions
+- Connect the repo to Vercel; configure each environment variable in the Vercel project settings (mirroring `.env.local`).
+- Every push triggers a build.
+- For production migrations, run `pnpm db:migrate` against the production `DATABASE_URL` manually, or wire it into a GitHub Actions job.
