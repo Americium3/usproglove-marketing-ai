@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**Language:** **English** · [简体中文](./README.zh-CN.md) · [繁體中文](./README.zh-TW.md)
 
-## Getting Started
+# USProGlove Marketing AI
 
-First, run the development server:
+Next.js + Drizzle (PostgreSQL with pgvector) + Vercel AI Gateway. Admin dashboard for outbound campaigns, a buy-side sourcing pipeline, and an internal knowledge base with semantic retrieval.
+
+## Local setup
+
+### 0. Prerequisites
+
+- Node.js 20+ (recommend `nvm`)
+- `pnpm` (`npm i -g pnpm`)
+- PostgreSQL 16+ with the **`pgvector` extension installed** (required by the knowledge base)
+  - Managed Postgres (Neon, Supabase, etc.) usually ships with it
+  - Self-hosted: `CREATE EXTENSION IF NOT EXISTS vector;`
+
+### 1. Clone & install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Americium3/usproglove-marketing-ai.git
+cd usproglove-marketing-ai
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `.env.local` in the repo root. Ask the account owner for the full list (Auth0, Brevo, Hunter, Snov, Google Places, AI Gateway, etc.). At minimum:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+DATABASE_URL=postgres://...           # must be a pgvector-capable Postgres
+AI_GATEWAY_API_KEY=...                # Vercel AI Gateway, for embeddings and LLMs
+AUTH0_SECRET=...
+AUTH0_BASE_URL=http://localhost:3000
+AUTH0_ISSUER_BASE_URL=...
+AUTH0_CLIENT_ID=...
+AUTH0_CLIENT_SECRET=...
+ADMIN_EMAILS=your@email.com           # comma-separated, controls access to /dashboard
+```
 
-## Learn More
+### 3. **Run database migrations** (required on first setup, and after any schema change)
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm db:migrate
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Reads `DATABASE_URL` from `.env.local` and applies every SQL file under `drizzle/`. On a fresh database this creates all tables, including `knowledge_sources` / `knowledge_chunks` plus the HNSW vector index.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Notes:
 
-## Deploy on Vercel
+- If `pgvector` is not installed, the migration will fail when creating the `vector(1536)` column — run `CREATE EXTENSION vector;` first.
+- After editing `src/lib/db/schema.ts`, run `pnpm db:generate` to produce a new migration file, then `pnpm db:migrate` to apply it.
+- `pnpm db:studio` opens a GUI for browsing the database.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Start the dev server
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev
+```
+
+Open http://localhost:3000 and sign in via Auth0 with an address listed in `ADMIN_EMAILS` to reach `/dashboard`.
+
+### 5. (Optional) Seed sample data
+
+```bash
+pnpm seed:campaign       # one example outbound campaign
+pnpm seed:buyside        # buy-side RFQ pipeline sample
+```
+
+## Common scripts
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Production build |
+| `pnpm typecheck` | TypeScript check |
+| `pnpm lint` | ESLint |
+| `pnpm db:generate` | Generate a new migration from schema changes |
+| `pnpm db:migrate` | Apply pending migrations to the database |
+| `pnpm db:push` | (Use with caution) push schema directly, bypassing migration files |
+| `pnpm db:studio` | Open the drizzle-kit visual DB browser |
+
+## Deploying to Vercel
+
+- Connect the repo to Vercel; configure each environment variable in the Vercel project settings (mirroring `.env.local`).
+- Every push triggers a build.
+- For production migrations, run `pnpm db:migrate` against the production `DATABASE_URL` manually, or wire it into a GitHub Actions job.
