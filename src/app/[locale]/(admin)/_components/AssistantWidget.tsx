@@ -2,16 +2,71 @@
 
 import { useState, useTransition, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { sendAssistantMessage, type ChatMessage } from "@/lib/assistant/chat";
-
-interface Citation {
-  title: string;
-  link: string;
-  snippet: string;
-}
+import Link from "next/link";
+import { sendAssistantMessage, type ChatMessage, type Citation } from "@/lib/assistant/chat";
 
 interface TurnMessage extends ChatMessage {
   citations?: Citation[];
+}
+
+function CitationList({
+  citations,
+  t,
+}: {
+  citations: Citation[];
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const knowledge = citations.filter((c) => c.kind === "knowledge");
+  const web = citations.filter((c) => c.kind === "web");
+
+  return (
+    <div className="mt-2 space-y-2 text-xs">
+      {knowledge.length > 0 && (
+        <div className="space-y-1.5">
+          <div className="text-neutral-500 font-medium">{t("sourcesKnowledge")}</div>
+          {knowledge.map((c, j) => (
+            <Link
+              key={`k-${j}`}
+              href={c.link}
+              className="block rounded border border-neutral-200 dark:border-neutral-800 px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+            >
+              <div className="flex items-baseline justify-between gap-2">
+                <div className="text-neutral-900 dark:text-neutral-100 line-clamp-1 flex-1">{c.title}</div>
+                {typeof c.similarity === "number" && (
+                  <span className="text-[10px] tabular-nums text-neutral-400">
+                    {Math.round(c.similarity * 100)}%
+                  </span>
+                )}
+              </div>
+              {(c.vertical || c.category) && (
+                <div className="text-[10px] uppercase tracking-wide text-neutral-500 mt-0.5">
+                  {[c.vertical, c.category].filter(Boolean).join(" · ")}
+                </div>
+              )}
+              <div className="text-neutral-500 line-clamp-2 mt-0.5">{c.snippet}</div>
+            </Link>
+          ))}
+        </div>
+      )}
+      {web.length > 0 && (
+        <div className="space-y-1.5">
+          <div className="text-neutral-500 font-medium">{t("sourcesWeb")}</div>
+          {web.map((c, j) => (
+            <a
+              key={`w-${j}`}
+              href={c.link}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="block rounded border border-neutral-200 dark:border-neutral-800 px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+            >
+              <div className="text-neutral-900 dark:text-neutral-100 line-clamp-1">{c.title}</div>
+              <div className="text-neutral-500 line-clamp-2">{c.snippet}</div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function AssistantWidget({ initialOpen = false }: { initialOpen?: boolean }) {
@@ -103,23 +158,7 @@ export function AssistantWidget({ initialOpen = false }: { initialOpen?: boolean
               >
                 {m.content}
                 {m.citations && m.citations.length > 0 && (
-                  <div className="mt-2 space-y-1.5 text-xs">
-                    <div className="text-neutral-500 font-medium">{t("sources")}</div>
-                    {m.citations.map((c, j) => (
-                      <a
-                        key={j}
-                        href={c.link}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="block rounded border border-neutral-200 dark:border-neutral-800 px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-900"
-                      >
-                        <div className="text-neutral-900 dark:text-neutral-100 line-clamp-1">
-                          {c.title}
-                        </div>
-                        <div className="text-neutral-500 line-clamp-2">{c.snippet}</div>
-                      </a>
-                    ))}
-                  </div>
+                  <CitationList citations={m.citations} t={t} />
                 )}
               </div>
             ))}

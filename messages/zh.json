@@ -31,6 +31,8 @@
     "thinking": "思考中…",
     "error": "错误",
     "sources": "来源",
+    "sourcesKnowledge": "来自知识库",
+    "sourcesWeb": "来自网络",
     "emptyPrompt": "问问关于系统或你市场的任何问题",
     "suggestion1": "调研美国手套市场的主要竞品",
     "suggestion2": "为德州牙科诊所写一份 ICP",
@@ -72,7 +74,8 @@
       "title": "新增知识源",
       "mode": {
         "text": "粘贴文本",
-        "url": "从 URL 抓取"
+        "url": "从 URL 抓取",
+        "pdf": "上传 PDF"
       },
       "fields": {
         "title": "标题",
@@ -85,7 +88,9 @@
         "sourceUrl": "来源 URL（可选）",
         "content": "内容",
         "url": "URL",
-        "urlHint": "抓取页面、剥离 HTML，再对可见正文进行切块与向量化。"
+        "urlHint": "抓取页面、剥离 HTML，再对可见正文进行切块与向量化。",
+        "file": "PDF 文件",
+        "fileHint": "最大 15 MB。按页提取文本，再切块并生成向量。"
       },
       "placeholders": {
         "title": "例：丁腈手套规格 — 4 克, FDA 510(k), ASTM D6319",
@@ -111,7 +116,23 @@
       "delete": "删除",
       "deleting": "删除中…",
       "deleteFailed": "删除失败",
-      "confirmDelete": "删除「{title}」及其所有切片？"
+      "confirmDelete": "删除「{title}」及其所有切片？",
+      "view": "查看"
+    },
+    "detail": {
+      "back": "返回知识库",
+      "updated": "更新时间",
+      "createdBy": "创建人",
+      "chunks": "切片",
+      "noChunks": "暂无切片。点击重新生成可重建向量。",
+      "reingestUrl": "重新抓取 URL 并向量化",
+      "reingestStored": "重新切块并向量化",
+      "reingesting": "重新向量化中…",
+      "reingestOk": "完成 — {count} 个切片",
+      "reingestFailed": "重新向量化失败",
+      "confirmReingestUrl": "重新抓取来源 URL 并重建所有切片？向量也会重算。",
+      "confirmReingestStored": "基于已存内容重建所有切片？向量也会重算。",
+      "missingSourceUrl": "缺少来源 URL"
     }
   },
   "auth": {

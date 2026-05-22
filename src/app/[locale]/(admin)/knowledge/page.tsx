@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { desc, eq, sql } from "drizzle-orm";
 import { setRequestLocale, getTranslations, getFormatter } from "next-intl/server";
 import { db, schema } from "@/lib/db";
@@ -92,13 +93,15 @@ export default async function KnowledgePage({
                 {rows.map((r) => (
                   <tr key={r.id} className="border-t border-neutral-200 dark:border-neutral-800">
                     <td className="px-3 py-2">
-                      <div className="font-medium">{r.title}</div>
+                      <Link href={`/knowledge/${r.id}`} className="font-medium hover:underline">
+                        {r.title}
+                      </Link>
                       {r.sourceUrl && (
                         <a
                           href={r.sourceUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-xs text-neutral-500 hover:underline"
+                          className="block text-xs text-neutral-500 hover:underline"
                         >
                           {r.sourceUrl}
                         </a>

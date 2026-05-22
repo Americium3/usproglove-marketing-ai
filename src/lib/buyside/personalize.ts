@@ -9,6 +9,7 @@
  */
 import { z } from "zod";
 import { trackedGenerateObject } from "@/lib/ai/track";
+import { retrieveChunks } from "@/lib/knowledge/retrieve";
 import type { TouchKind } from "@/../content/buyside/rfq";
 
 export type RoleBucket =
@@ -159,6 +160,30 @@ const TOUCH_NOTES: Record<TouchKind, string> = {
   follow_up_2: "Day +7, final touch. Acknowledge this is the last attempt. Offer them an easy 'not a fit' out so we can close the loop. Less pushy.",
 };
 
+async function loadKnowledgeContext(args: {
+  supplierName: string;
+  region: Region;
+  roleBucket: RoleBucket;
+}): Promise<string> {
+  const query = `Sourcing program positioning, certifications (FDA / CE / EN 455 / ASTM D6319), supplier negotiation language. Region: ${args.region}. Recipient role: ${args.roleBucket}. Supplier: ${args.supplierName}.`;
+  try {
+    const chunks = await retrieveChunks(query, {
+      vertical: "supplier",
+      k: 4,
+      minSimilarity: 0.25,
+    });
+    if (chunks.length === 0) return "";
+    return chunks
+      .map(
+        (c, i) =>
+          `[${i + 1}] (${c.category ?? "general"}) ${c.sourceTitle}\n${c.text.slice(0, 700)}`,
+      )
+      .join("\n\n");
+  } catch {
+    return "";
+  }
+}
+
 export async function personalizeForRecipient(
   input: PersonalizationInput,
 ): Promise<PersonalizationOutput> {
@@ -167,6 +192,11 @@ export async function personalizeForRecipient(
   const roleGuide = ROLE_GUIDANCE[roleBucket];
   const regionNote = REGION_NOTES[region];
   const touchNote = TOUCH_NOTES[input.touch];
+  const knowledgeContext = await loadKnowledgeContext({
+    supplierName: input.supplier.name,
+    region,
+    roleBucket,
+  });
 
   const supplierFacts: string[] = [`Name: ${input.supplier.name}`];
   if (input.supplier.country) supplierFacts.push(`HQ: ${[input.supplier.city, input.supplier.country].filter(Boolean).join(", ")}`);
@@ -209,6 +239,9 @@ ${recipientFacts.join("\n") || "(only company-level info available)"}
 # Public research signals (use these to reference something REAL about the recipient or their company)
 ${input.researchContext?.trim() || "(no public signals available — fall back to supplier facts only)"}
 
+# Internal knowledge (curated sourcing-program context — phrasing, certifications, positioning that Jay has used before)
+${knowledgeContext || "(no curated knowledge available for this query)"}
+
 Hard rules:
 - Never quote pricing or specific spec numbers (those go in the post-call package)
 - Never use ALL CAPS, exclamation marks, or marketing language
@@ -219,7 +252,8 @@ Hard rules:
 - Close CTA: must end with an ask for a phone number AND a time slot. Do NOT offer a Calendly link or suggest scheduling tools.
 - No first names in the body (the greeting handles that)
 - Avoid clichés: "circling back", "touching base", "synergies", "leveraging", "best in class"
-- For follow_up_1 and follow_up_2: be SHORTER. Do not re-pitch volume — they already saw it.`;
+- For follow_up_1 and follow_up_2: be SHORTER. Do not re-pitch volume — they already saw it.
+- The "Internal knowledge" section may contain phrasing, cert references, or positioning Jay has approved. Borrow tone and specifics from it where they fit naturally — never quote it verbatim, and never fabricate detail that the knowledge does not state.`;
 
   const result = await trackedGenerateObject({
     task: "draft",

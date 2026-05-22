@@ -3,14 +3,18 @@
 import { useTransition, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { createKnowledgeSource, createKnowledgeSourceFromUrl } from "../actions";
+import {
+  createKnowledgeSource,
+  createKnowledgeSourceFromUrl,
+  createKnowledgeSourceFromPdf,
+} from "../actions";
 
 interface Props {
   verticals: readonly string[];
   kinds: readonly string[];
 }
 
-type Mode = "text" | "url";
+type Mode = "text" | "url" | "pdf";
 
 export default function KnowledgeForm({ verticals, kinds }: Props) {
   const t = useTranslations("knowledge.form");
@@ -25,7 +29,12 @@ export default function KnowledgeForm({ verticals, kinds }: Props) {
     setError(null);
     setOkMessage(null);
     const fd = new FormData(e.currentTarget);
-    const action = mode === "url" ? createKnowledgeSourceFromUrl : createKnowledgeSource;
+    const action =
+      mode === "url"
+        ? createKnowledgeSourceFromUrl
+        : mode === "pdf"
+          ? createKnowledgeSourceFromPdf
+          : createKnowledgeSource;
     startTransition(async () => {
       const res = await action(fd);
       if (!res.ok) {
@@ -40,7 +49,9 @@ export default function KnowledgeForm({ verticals, kinds }: Props) {
 
   return (
     <form
+      key={mode}
       onSubmit={onSubmit}
+      encType={mode === "pdf" ? "multipart/form-data" : undefined}
       className="rounded-lg border border-neutral-200 dark:border-neutral-800 p-5 space-y-4 bg-white dark:bg-neutral-950"
     >
       <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -49,7 +60,7 @@ export default function KnowledgeForm({ verticals, kinds }: Props) {
           role="tablist"
           className="inline-flex rounded-md border border-neutral-200 dark:border-neutral-800 p-0.5 text-xs"
         >
-          {(["text", "url"] as Mode[]).map((m) => (
+          {(["text", "url", "pdf"] as Mode[]).map((m) => (
             <button
               key={m}
               type="button"
@@ -147,7 +158,7 @@ export default function KnowledgeForm({ verticals, kinds }: Props) {
             />
           </label>
         </div>
-      ) : (
+      ) : mode === "url" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="flex flex-col gap-1 text-sm sm:col-span-2">
             <span className="text-neutral-700 dark:text-neutral-300">{t("fields.url")}</span>
@@ -159,6 +170,57 @@ export default function KnowledgeForm({ verticals, kinds }: Props) {
               className="rounded border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm"
             />
             <span className="text-xs text-neutral-500">{t("fields.urlHint")}</span>
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="text-neutral-700 dark:text-neutral-300">{t("fields.titleOverride")}</span>
+            <input
+              name="titleOverride"
+              maxLength={200}
+              placeholder={t("placeholders.titleOverride")}
+              className="rounded border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="text-neutral-700 dark:text-neutral-300">{t("fields.vertical")}</span>
+            <select
+              name="vertical"
+              defaultValue=""
+              className="rounded border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm"
+            >
+              <option value="">{t("fields.verticalAny")}</option>
+              {verticals.map((v) => (
+                <option key={v} value={v}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+            <span className="text-neutral-700 dark:text-neutral-300">{t("fields.category")}</span>
+            <input
+              name="category"
+              maxLength={64}
+              placeholder={t("placeholders.category")}
+              className="rounded border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm"
+            />
+            <span className="text-xs text-neutral-500">{t("fields.categoryHint")}</span>
+          </label>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="flex flex-col gap-1 text-sm sm:col-span-2">
+            <span className="text-neutral-700 dark:text-neutral-300">{t("fields.file")}</span>
+            <input
+              type="file"
+              name="file"
+              accept="application/pdf,.pdf"
+              required
+              className="rounded border border-neutral-300 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-neutral-100 dark:file:bg-neutral-800 file:px-3 file:py-1 file:text-sm"
+            />
+            <span className="text-xs text-neutral-500">{t("fields.fileHint")}</span>
           </label>
 
           <label className="flex flex-col gap-1 text-sm">

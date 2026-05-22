@@ -31,6 +31,8 @@
     "thinking": "Thinking…",
     "error": "Error",
     "sources": "Sources",
+    "sourcesKnowledge": "From knowledge base",
+    "sourcesWeb": "From the web",
     "emptyPrompt": "Ask me anything about the agent or your market.",
     "suggestion1": "Research competitors in the US nitrile glove market",
     "suggestion2": "Draft an ICP for dental clinics in Texas",
@@ -72,7 +74,8 @@
       "title": "Add knowledge source",
       "mode": {
         "text": "Paste text",
-        "url": "From URL"
+        "url": "From URL",
+        "pdf": "Upload PDF"
       },
       "fields": {
         "title": "Title",
@@ -85,7 +88,9 @@
         "sourceUrl": "Source URL (optional)",
         "content": "Content",
         "url": "URL",
-        "urlHint": "Fetches the page, strips HTML, then chunks and embeds the visible text."
+        "urlHint": "Fetches the page, strips HTML, then chunks and embeds the visible text.",
+        "file": "PDF file",
+        "fileHint": "Max 15 MB. Text is extracted page-by-page, then chunked and embedded."
       },
       "placeholders": {
         "title": "e.g. Nitrile glove spec — 4g, FDA 510(k), ASTM D6319",
@@ -111,7 +116,23 @@
       "delete": "Delete",
       "deleting": "Deleting…",
       "deleteFailed": "Delete failed",
-      "confirmDelete": "Delete \"{title}\" and all its chunks?"
+      "confirmDelete": "Delete \"{title}\" and all its chunks?",
+      "view": "View"
+    },
+    "detail": {
+      "back": "Back to knowledge base",
+      "updated": "Updated",
+      "createdBy": "Created by",
+      "chunks": "Chunks",
+      "noChunks": "No chunks yet. Re-ingest to (re)build the embeddings.",
+      "reingestUrl": "Refetch URL and re-embed",
+      "reingestStored": "Re-chunk and re-embed",
+      "reingesting": "Re-embedding…",
+      "reingestOk": "Done — {count} chunks",
+      "reingestFailed": "Re-ingest failed",
+      "confirmReingestUrl": "Refetch the source URL and rebuild all chunks? Embeddings will be regenerated.",
+      "confirmReingestStored": "Rebuild all chunks from the stored content? Embeddings will be regenerated.",
+      "missingSourceUrl": "Original source URL is missing"
     }
   },
   "auth": {

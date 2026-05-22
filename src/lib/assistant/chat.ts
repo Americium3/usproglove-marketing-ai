@@ -14,10 +14,20 @@ export interface ChatMessage {
   content: string;
 }
 
+export interface Citation {
+  kind: "knowledge" | "web";
+  title: string;
+  link: string;
+  snippet: string;
+  vertical?: string | null;
+  category?: string | null;
+  similarity?: number;
+}
+
 export interface ChatResponse {
   ok: true;
   message: string;
-  citations: Array<{ title: string; link: string; snippet: string }>;
+  citations: Citation[];
 }
 
 export type AssistantResult =
@@ -52,7 +62,7 @@ export async function sendAssistantMessage(args: {
   if (userMessage.length === 0) return { ok: false, error: "empty_message" };
   if (userMessage.length > 4000) return { ok: false, error: "too_long" };
 
-  const citations: Array<{ title: string; link: string; snippet: string }> = [];
+  const citations: Citation[] = [];
   const modelId = "anthropic/claude-sonnet-4-6";
   const start = Date.now();
 
@@ -74,7 +84,7 @@ export async function sendAssistantMessage(args: {
           execute: async ({ query }) => {
             const res = await webSearch(query, { num: 8 });
             for (const r of res.results.slice(0, 5)) {
-              citations.push({ title: r.title, link: r.link, snippet: r.snippet });
+              citations.push({ kind: "web", title: r.title, link: r.link, snippet: r.snippet });
             }
             return {
               answer: res.answer,
@@ -100,11 +110,18 @@ export async function sendAssistantMessage(args: {
           execute: async ({ query, vertical, k }) => {
             try {
               const chunks = await retrieveChunks(query, { vertical, k: k ?? 5 });
+              const seen = new Set<string>();
               for (const c of chunks.slice(0, 5)) {
+                if (seen.has(c.sourceId)) continue;
+                seen.add(c.sourceId);
                 citations.push({
+                  kind: "knowledge",
                   title: c.sourceTitle,
-                  link: `/knowledge#${c.sourceId}`,
+                  link: `/knowledge/${c.sourceId}`,
                   snippet: c.text.slice(0, 240),
+                  vertical: c.vertical,
+                  category: c.category,
+                  similarity: Number(c.similarity.toFixed(3)),
                 });
               }
               return {
