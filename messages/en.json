@@ -79,7 +79,7 @@
       },
       "fields": {
         "title": "Title",
-        "titleOverride": "Title (optional)",
+        "titleOverride": "Title (optional, leave empty to use the page title tag)",
         "kind": "Kind",
         "vertical": "Vertical (optional)",
         "verticalAny": "Any",
@@ -94,7 +94,7 @@
       },
       "placeholders": {
         "title": "e.g. Nitrile glove spec — 4g, FDA 510(k), ASTM D6319",
-        "titleOverride": "Leave empty to use the page <title>",
+        "titleOverride": "Leave empty to use the page title tag",
         "category": "persona / objection / positioning / cert / faq",
         "content": "Paste plain text or MDX. Will be chunked and embedded automatically."
       },

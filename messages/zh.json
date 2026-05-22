@@ -79,7 +79,7 @@
       },
       "fields": {
         "title": "标题",
-        "titleOverride": "标题（可选，留空用页面 <title>）",
+        "titleOverride": "标题（可选，留空则用页面 title 标签）",
         "kind": "类型",
         "vertical": "行业垂直（可选）",
         "verticalAny": "不限",
@@ -94,7 +94,7 @@
       },
       "placeholders": {
         "title": "例：丁腈手套规格 — 4 克, FDA 510(k), ASTM D6319",
-        "titleOverride": "留空则使用页面 <title>",
+        "titleOverride": "留空则使用页面 title 标签",
         "category": "persona / objection / positioning / cert / faq",
         "content": "粘贴纯文本或 MDX。会自动切块与向量化。"
       },

@@ -79,7 +79,7 @@
       },
       "fields": {
         "title": "標題",
-        "titleOverride": "標題（可選，留空使用頁面 <title>）",
+        "titleOverride": "標題（可選，留空使用頁面 title 標籤）",
         "kind": "類型",
         "vertical": "行業（可選）",
         "verticalAny": "不限",
@@ -94,7 +94,7 @@
       },
       "placeholders": {
         "title": "例：丁腈手套規格 — 4 克, FDA 510(k), ASTM D6319",
-        "titleOverride": "留空則使用頁面 <title>",
+        "titleOverride": "留空則使用頁面 title 標籤",
         "category": "persona / objection / positioning / cert / faq",
         "content": "貼上純文字或 MDX。系統會自動切塊與向量化。"
       },
