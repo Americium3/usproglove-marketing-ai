@@ -70,18 +70,27 @@
     "description": "内部知识存储：产品参数、买家画像、FAQ 话术、异议应对、合规文档。AI 助手回答问题和起草外联时会自动检索。",
     "form": {
       "title": "新增知识源",
+      "mode": {
+        "text": "粘贴文本",
+        "url": "从 URL 抓取"
+      },
       "fields": {
         "title": "标题",
+        "titleOverride": "标题（可选，留空用页面 <title>）",
         "kind": "类型",
         "vertical": "行业垂直（可选）",
         "verticalAny": "不限",
         "category": "分类（可选）",
+        "categoryHint": "约定：persona / objection / positioning / cert / faq — 外联起草和助手会按此过滤。",
         "sourceUrl": "来源 URL（可选）",
-        "content": "内容"
+        "content": "内容",
+        "url": "URL",
+        "urlHint": "抓取页面、剥离 HTML，再对可见正文进行切块与向量化。"
       },
       "placeholders": {
         "title": "例：丁腈手套规格 — 4 克, FDA 510(k), ASTM D6319",
-        "category": "product-spec / persona / objection / compliance / faq",
+        "titleOverride": "留空则使用页面 <title>",
+        "category": "persona / objection / positioning / cert / faq",
         "content": "粘贴纯文本或 MDX。会自动切块与向量化。"
       },
       "submit": "入库并生成向量",

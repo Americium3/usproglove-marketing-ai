@@ -70,18 +70,27 @@
     "description": "內部知識儲存：產品規格、買家畫像、FAQ 話術、異議應對、合規文件。AI 助手回答問題與起草外聯時會自動檢索。",
     "form": {
       "title": "新增知識來源",
+      "mode": {
+        "text": "貼上文字",
+        "url": "從 URL 擷取"
+      },
       "fields": {
         "title": "標題",
+        "titleOverride": "標題（可選，留空使用頁面 <title>）",
         "kind": "類型",
         "vertical": "行業（可選）",
         "verticalAny": "不限",
         "category": "分類（可選）",
+        "categoryHint": "建議分類：persona / objection / positioning / cert / faq — 外聯起草與助手會依此過濾。",
         "sourceUrl": "來源 URL（可選）",
-        "content": "內容"
+        "content": "內容",
+        "url": "URL",
+        "urlHint": "抓取頁面、剝除 HTML，再對可見內文進行切塊與向量化。"
       },
       "placeholders": {
         "title": "例：丁腈手套規格 — 4 克, FDA 510(k), ASTM D6319",
-        "category": "product-spec / persona / objection / compliance / faq",
+        "titleOverride": "留空則使用頁面 <title>",
+        "category": "persona / objection / positioning / cert / faq",
         "content": "貼上純文字或 MDX。系統會自動切塊與向量化。"
       },
       "submit": "入庫並建立向量",

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { schema } from "@/lib/db";
 import { checkAdmin } from "@/lib/auth/admin";
 import { ingestSource, deleteSource } from "@/lib/knowledge/ingest";
+import { fetchUrlAsText } from "@/lib/knowledge/fetch";
 
 type SuccessResult<T> = { ok: true } & T;
 type FailureResult = { ok: false; error: string };
@@ -54,6 +55,52 @@ export async function createKnowledgeSource(
     });
     revalidatePath("/[locale]/(admin)/knowledge", "page");
     return { ok: true, sourceId: result.sourceId, chunkCount: result.chunkCount };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
+}
+
+const UrlIngestSchema = z.object({
+  url: z.string().url(),
+  vertical: VerticalEnum.optional(),
+  category: z.string().max(64).optional(),
+  titleOverride: z.string().max(200).optional(),
+});
+
+export async function createKnowledgeSourceFromUrl(
+  formData: FormData,
+): Promise<SuccessResult<{ sourceId: string; chunkCount: number; title: string }> | FailureResult> {
+  const auth = await checkAdmin();
+  if (!auth.ok) return { ok: false, error: "unauthorized" };
+
+  const raw = {
+    url: formData.get("url")?.toString() ?? "",
+    vertical: formData.get("vertical")?.toString() || undefined,
+    category: formData.get("category")?.toString() || undefined,
+    titleOverride: formData.get("titleOverride")?.toString() || undefined,
+  };
+
+  const parsed = UrlIngestSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "invalid_input" };
+  }
+
+  try {
+    const page = await fetchUrlAsText(parsed.data.url);
+    if (page.text.length < 100) {
+      return { ok: false, error: "fetched_page_too_short" };
+    }
+    const result = await ingestSource({
+      title: parsed.data.titleOverride || page.title,
+      kind: "url",
+      vertical: parsed.data.vertical,
+      category: parsed.data.category,
+      sourceUrl: page.finalUrl,
+      rawContent: page.text,
+      createdBy: auth.email,
+    });
+    revalidatePath("/[locale]/(admin)/knowledge", "page");
+    return { ok: true, sourceId: result.sourceId, chunkCount: result.chunkCount, title: page.title };
   } catch (err) {
     return { ok: false, error: (err as Error).message };
   }

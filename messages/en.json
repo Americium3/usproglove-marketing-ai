@@ -70,18 +70,27 @@
     "description": "Internal knowledge store: product specs, buyer personas, FAQ language, objection responses, compliance docs. The AI assistant retrieves from this when answering or drafting.",
     "form": {
       "title": "Add knowledge source",
+      "mode": {
+        "text": "Paste text",
+        "url": "From URL"
+      },
       "fields": {
         "title": "Title",
+        "titleOverride": "Title (optional)",
         "kind": "Kind",
         "vertical": "Vertical (optional)",
         "verticalAny": "Any",
         "category": "Category (optional)",
+        "categoryHint": "Convention: persona / objection / positioning / cert / faq — used by the outbound drafter and assistant.",
         "sourceUrl": "Source URL (optional)",
-        "content": "Content"
+        "content": "Content",
+        "url": "URL",
+        "urlHint": "Fetches the page, strips HTML, then chunks and embeds the visible text."
       },
       "placeholders": {
         "title": "e.g. Nitrile glove spec — 4g, FDA 510(k), ASTM D6319",
-        "category": "product-spec / persona / objection / compliance / faq",
+        "titleOverride": "Leave empty to use the page <title>",
+        "category": "persona / objection / positioning / cert / faq",
         "content": "Paste plain text or MDX. Will be chunked and embedded automatically."
       },
       "submit": "Ingest and embed",

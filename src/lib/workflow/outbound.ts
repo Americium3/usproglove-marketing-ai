@@ -19,6 +19,7 @@ import {
   type EventKind,
 } from "./persistence";
 import { parseIcp, matchesExcludes, type IcpConfig } from "./icp";
+import { retrieveChunks } from "@/lib/knowledge/retrieve";
 
 const DraftSchema = z.object({
   subject: z.string().min(6).max(80),
@@ -378,6 +379,13 @@ export async function runOutboundStep(ctx: OutboundContext) {
         products.find((p) => p.id === heroSkuId) ??
         products.find((p) => p.id === heroSkuByVertical[ctx.vertical])!;
 
+      const knowledgeSnippets = await retrieveKnowledgeForDraft({
+        vertical: ctx.vertical,
+        heroSkuName: heroSku.name,
+        positioning: heroSku.positioning,
+        companyName: company.name,
+      });
+
       const draft = await trackedGenerateObject({
         task: "draft",
         modelKey: "primary",
@@ -388,6 +396,7 @@ export async function runOutboundStep(ctx: OutboundContext) {
           contactName: contact.firstName,
           heroSkuName: heroSku.name,
           positioning: heroSku.positioning,
+          knowledgeSnippets,
         }),
         campaignId: ctx.campaignId,
         metadata: { heroSkuId: heroSku.id, prospectId },
@@ -553,7 +562,12 @@ function draftPrompt(args: {
   contactName?: string;
   heroSkuName: string;
   positioning: string[];
+  knowledgeSnippets?: string[];
 }): string {
+  const kbBlock = args.knowledgeSnippets && args.knowledgeSnippets.length > 0
+    ? `\nReference language from our internal knowledge base (objection responses, certifications, vertical-specific positioning). You may borrow phrasing or factual claims, but do not copy any snippet verbatim or quote it. Treat it as background, not boilerplate:\n---\n${args.knowledgeSnippets.join("\n---\n")}\n---\n`
+    : "";
+
   return `Draft a short B2B cold outreach email — 3 short paragraphs, plainspoken, no marketing fluff, no emojis.
 
 Company: ${args.company}
@@ -561,7 +575,7 @@ Vertical: ${args.vertical}
 Contact: ${args.contactName ?? "there"}
 Hero product: ${args.heroSkuName}
 Product positioning: ${args.positioning.join(", ")}
-
+${kbBlock}
 Rules:
 - Subject < 55 chars, curiosity over claim
 - Open line references something specific to ${args.vertical} work (not "I was looking at your website")
@@ -569,4 +583,28 @@ Rules:
 - Close with a single soft CTA (reply to get a sample pack)
 - Plaintext + HTML variants. HTML is semantic, no inline styles beyond <b> and <a>.
 - No "Dear", no "I hope this finds you well".`;
+}
+
+/**
+ * Pull the most relevant 2 knowledge chunks for this draft. Returns [] silently
+ * if retrieval fails (DB unavailable, no embeddings yet, similarity floor not
+ * met) so outbound never blocks on the knowledge base being populated.
+ */
+async function retrieveKnowledgeForDraft(args: {
+  vertical: Vertical;
+  heroSkuName: string;
+  positioning: string[];
+  companyName: string;
+}): Promise<string[]> {
+  const query = `${args.heroSkuName} for ${args.vertical} buyers — ${args.positioning.join("; ")}`;
+  try {
+    const hits = await retrieveChunks(query, {
+      vertical: args.vertical,
+      k: 2,
+      minSimilarity: 0.45,
+    });
+    return hits.map((h) => h.text);
+  } catch {
+    return [];
+  }
 }
