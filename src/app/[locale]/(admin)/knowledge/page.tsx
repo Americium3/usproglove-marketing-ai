@@ -56,7 +56,7 @@ export default async function KnowledgePage({
   const t = await getTranslations("knowledge");
   const format = await getFormatter();
 
-  const { rows } = await fetchSources();
+  const rows = await fetchSources();
 
   return (
     <div className="space-y-8">
