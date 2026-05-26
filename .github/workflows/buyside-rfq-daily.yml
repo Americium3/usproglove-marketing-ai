@@ -22,10 +22,6 @@ name: Buyside RFQ — Daily
 #   CRON_SECRET   — same value set in Vercel env; used as Bearer auth
 
 on:
-  schedule:
-    - cron: "0 11 * * *"  # cohort A
-    - cron: "0 14 * * *"  # cohort B
-    - cron: "0 1  * * *"  # cohort C
   workflow_dispatch:
     inputs:
       cohort:
