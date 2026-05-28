@@ -8,6 +8,7 @@ import {
   getActiveCampaignCount,
   getLatestSnapshotsByKind,
   getLatestCronRunPerJob,
+  getOutboundFunnel,
   type LatestSnapshot,
 } from "@/lib/usage/queries";
 import { CRON_JOBS } from "@/lib/cron/tracker";
@@ -40,14 +41,18 @@ export default async function DashboardPage({
   const t = await getTranslations("dashboard");
   const format = await getFormatter();
 
-  const [tokens, sentToday, repliesToday, activeCampaigns, snapshots, latestCronRuns] = await Promise.all([
+  const [tokens, sentToday, repliesToday, activeCampaigns, snapshots, latestCronRuns, funnel30d] = await Promise.all([
     getTodayTokenUsage().catch(() => null),
     getTodaySentCount().catch(() => 0),
     getTodayReplyCount().catch(() => 0),
     getActiveCampaignCount().catch(() => 0),
     getLatestSnapshotsByKind().catch(() => ({} as Record<string, LatestSnapshot>)),
     getLatestCronRunPerJob().catch(() => ({}) as Record<string, import("@/lib/usage/queries").CronRunRow>),
+    getOutboundFunnel({ sinceDays: 30 }).catch(() => ({ sent: 0, opened: 0, clicked: 0, replied: 0, bounced: 0 })),
   ]);
+
+  const pct = (num: number, denom: number): string =>
+    denom > 0 ? `${((num / denom) * 100).toFixed(1)}%` : "—";
 
   const dbSize = snapshots["db_total_size_bytes"]?.value ?? 0;
   const brevoDaily =
@@ -65,7 +70,31 @@ export default async function DashboardPage({
     { label: t("todaySent"), value: String(sentToday) },
     { label: t("todayReplies"), value: String(repliesToday) },
     { label: t("activeCampaigns"), value: String(activeCampaigns) },
-    { label: t("replyRate"), value: "—" },
+    { label: t("replyRate"), value: pct(funnel30d.replied, funnel30d.sent), sub: "30d window" },
+  ];
+
+  const funnelStats = [
+    { label: t("funnelSent"), value: String(funnel30d.sent) },
+    {
+      label: t("funnelOpened"),
+      value: String(funnel30d.opened),
+      sub: pct(funnel30d.opened, funnel30d.sent),
+    },
+    {
+      label: t("funnelClicked"),
+      value: String(funnel30d.clicked),
+      sub: pct(funnel30d.clicked, funnel30d.sent),
+    },
+    {
+      label: t("funnelReplied"),
+      value: String(funnel30d.replied),
+      sub: pct(funnel30d.replied, funnel30d.sent),
+    },
+    {
+      label: t("funnelBounced"),
+      value: String(funnel30d.bounced),
+      sub: pct(funnel30d.bounced, funnel30d.sent),
+    },
   ];
 
   const usageStats = [
@@ -115,7 +144,16 @@ export default async function DashboardPage({
         <h1 className="text-2xl font-semibold mb-6">{t("title")}</h1>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {campaignStats.map((s) => (
-            <StatCard key={s.label} label={s.label} value={s.value} />
+            <StatCard key={s.label} label={s.label} value={s.value} sub={"sub" in s ? s.sub : undefined} />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold mb-4">{t("funnelTitle")}</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          {funnelStats.map((s) => (
+            <StatCard key={s.label} label={s.label} value={s.value} sub={"sub" in s ? s.sub : undefined} />
           ))}
         </div>
       </section>

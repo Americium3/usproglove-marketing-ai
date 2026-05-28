@@ -413,6 +413,7 @@ export async function runOutboundStep(ctx: OutboundContext) {
         phone: process.env.SENDER_PHONE || undefined,
         companyName: process.env.SENDER_COMPANY_NAME || undefined,
         companyWebsite: process.env.SENDER_COMPANY_WEBSITE || undefined,
+        meetingUrl: process.env.SENDER_MEETING_URL || undefined,
       };
       const composed = composeEmail({
         draft: draft.object,
@@ -566,7 +567,7 @@ Rules:
 - Subject < 55 chars, curiosity over claim
 - Open line references something specific to ${args.vertical} work (not "I was looking at your website")
 - One concrete value bullet tied to the product positioning
-- Close with a single soft CTA (reply to get a sample pack)
+- Close with a single soft CTA (reply to get a sample pack). Do NOT include any URLs, calendar links, or "book a call" text — a scheduling CTA is appended separately.
 - Plaintext + HTML variants. HTML is semantic, no inline styles beyond <b> and <a>.
 - No "Dear", no "I hope this finds you well".`;
 }

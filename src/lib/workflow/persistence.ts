@@ -14,7 +14,13 @@ export type EventKind =
   | "prospect.skipped"
   | "message.drafted"
   | "message.sent"
-  | "message.failed";
+  | "message.failed"
+  | "email.delivered"
+  | "email.opened"
+  | "email.clicked"
+  | "email.bounced"
+  | "email.unsubscribed"
+  | "email.spam";
 
 export async function upsertCompany(
   place: DiscoveredCompany,

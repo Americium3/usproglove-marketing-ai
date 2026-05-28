@@ -6,6 +6,7 @@ export interface SenderIdentity {
   phone?: string;
   companyName?: string;
   companyWebsite?: string;
+  meetingUrl?: string;
 }
 
 export interface Recipient {
@@ -43,7 +44,17 @@ export function getSenderFromEnv(): SenderIdentity {
     phone: process.env.SENDER_PHONE || undefined,
     companyName: process.env.SENDER_COMPANY_NAME || undefined,
     companyWebsite: process.env.SENDER_COMPANY_WEBSITE || undefined,
+    meetingUrl: process.env.SENDER_MEETING_URL || undefined,
   };
+}
+
+function buildMeetingCtaText(url: string): string {
+  return `Prefer a quick call? Grab a 15-min slot: ${url}`;
+}
+
+function buildMeetingCtaHtml(url: string): string {
+  const safeUrl = escapeHtml(url);
+  return `<p style="margin:18px 0;font-size:14px;line-height:1.5;">Prefer a quick call? <a href="${safeUrl}">Grab a 15-min slot</a>.</p>`;
 }
 
 function escapeHtml(s: string): string {
@@ -123,8 +134,11 @@ export function composeEmail(args: {
   const sig = getSignature(sender, args.signatureOverride);
   const recipientName = [recipient.firstName, recipient.lastName].filter(Boolean).join(" ") || null;
 
-  const textContent = `${draft.textBody.trimEnd()}\n\n${sig.text}\n`;
-  const htmlContent = `${draft.htmlBody}\n${sig.html}`;
+  const ctaText = sender.meetingUrl ? `\n\n${buildMeetingCtaText(sender.meetingUrl)}` : "";
+  const ctaHtml = sender.meetingUrl ? `\n${buildMeetingCtaHtml(sender.meetingUrl)}` : "";
+
+  const textContent = `${draft.textBody.trimEnd()}${ctaText}\n\n${sig.text}\n`;
+  const htmlContent = `${draft.htmlBody}${ctaHtml}\n${sig.html}`;
 
   return {
     from: formatAddress(sender.name, sender.email),

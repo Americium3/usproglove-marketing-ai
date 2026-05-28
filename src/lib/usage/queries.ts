@@ -1,4 +1,4 @@
-import { sql, and, gte, eq, desc } from "drizzle-orm";
+import { sql, and, gte, eq, desc, isNotNull } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 
 export interface TodayTokenUsage {
@@ -97,6 +97,62 @@ export async function getTodayReplyCount(): Promise<number> {
     .from(schema.messages)
     .where(and(eq(schema.messages.direction, "inbound"), gte(schema.messages.receivedAt, startOfDay)));
   return Number(res[0]?.count ?? 0);
+}
+
+export interface OutboundFunnel {
+  sent: number;
+  opened: number;
+  clicked: number;
+  replied: number;
+  bounced: number;
+}
+
+/**
+ * All-time outbound funnel. Counts unique outbound messages with the relevant
+ * timestamp set; opens/clicks/bounces are populated by the Brevo webhook,
+ * replies by inbound matching via in_reply_to.
+ */
+export async function getOutboundFunnel(opts?: { sinceDays?: number }): Promise<OutboundFunnel> {
+  const since = opts?.sinceDays
+    ? new Date(Date.now() - opts.sinceDays * 86400_000)
+    : null;
+
+  const baseWhere = and(
+    eq(schema.messages.direction, "outbound"),
+    isNotNull(schema.messages.sentAt),
+    since ? gte(schema.messages.sentAt, since) : undefined,
+  );
+
+  const [counts] = await db
+    .select({
+      sent: sql<string>`COUNT(*)::text`,
+      opened: sql<string>`COUNT(${schema.messages.openedAt})::text`,
+      clicked: sql<string>`COUNT(${schema.messages.clickedAt})::text`,
+      bounced: sql<string>`COUNT(${schema.messages.bouncedAt})::text`,
+    })
+    .from(schema.messages)
+    .where(baseWhere);
+
+  const repliedWhere = and(
+    eq(schema.messages.direction, "inbound"),
+    isNotNull(schema.messages.inReplyTo),
+    since ? gte(schema.messages.receivedAt, since) : undefined,
+  );
+
+  const [repliedRow] = await db
+    .select({
+      replied: sql<string>`COUNT(DISTINCT ${schema.messages.inReplyTo})::text`,
+    })
+    .from(schema.messages)
+    .where(repliedWhere);
+
+  return {
+    sent: Number(counts?.sent ?? 0),
+    opened: Number(counts?.opened ?? 0),
+    clicked: Number(counts?.clicked ?? 0),
+    bounced: Number(counts?.bounced ?? 0),
+    replied: Number(repliedRow?.replied ?? 0),
+  };
 }
 
 export async function getRecentAiCalls(limit = 10) {
