@@ -3,7 +3,9 @@ import { hunterProvider } from "./hunter";
 import { snovProvider } from "./snov";
 import type { EnrichedContact, EnrichmentProvider, EnrichmentQuery } from "../types";
 
-const FIND_CHAIN: EnrichmentProvider[] = [apolloProvider, hunterProvider, snovProvider];
+// Hunter first: it returns emails in one call (cheaper), so Apollo — which now
+// costs a people/match enrich credit per email — only runs when Hunter comes up empty.
+const FIND_CHAIN: EnrichmentProvider[] = [hunterProvider, apolloProvider, snovProvider];
 const VERIFY_CHAIN: EnrichmentProvider[] = [hunterProvider, apolloProvider, snovProvider];
 
 export interface FindContactsResult {
