@@ -25,11 +25,21 @@ export const hunterProvider: EnrichmentProvider = {
     };
 
     const emails = data.data?.emails ?? [];
-    const filtered = query.rolesOfInterest?.length
-      ? emails.filter((e) => query.rolesOfInterest!.some((r) => e.position?.toLowerCase().includes(r.toLowerCase())))
-      : emails;
+    // Soft role preference, not a hard filter: small clinics list buyers under
+    // titles like "Director of Nursing" / "Office Admin" that rarely contain our
+    // role keywords. Prefer role matches, but fall back to all emails so a domain
+    // with real contacts is never dropped to zero — AI scoring picks fit later.
+    const roles = query.rolesOfInterest;
+    let picked = emails;
+    if (roles?.length) {
+      const matched = emails.filter((e) =>
+        roles.some((r) => e.position?.toLowerCase().includes(r.toLowerCase())),
+      );
+      if (matched.length > 0) picked = matched;
+    }
+    picked = [...picked].sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0));
 
-    return filtered.map((e) => ({
+    return picked.map((e) => ({
       email: e.value,
       firstName: e.first_name,
       lastName: e.last_name,
