@@ -3,6 +3,7 @@ import { db, schema } from "@/lib/db";
 
 export const CRON_JOBS = [
   "outbound",
+  "follow-up",
   "reply-poll",
   "content-publish",
   "usage-snapshot",

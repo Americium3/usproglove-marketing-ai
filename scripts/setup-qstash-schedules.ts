@@ -24,6 +24,7 @@ if (!APP_BASE_URL.startsWith("https://")) {
 
 const schedules = [
   { name: "outbound", cron: "0 */4 * * *", path: "/api/cron/outbound" },
+  { name: "follow-up", cron: "0 16 * * *", path: "/api/cron/follow-up" },
   { name: "reply-poll", cron: "*/15 * * * *", path: "/api/cron/reply-poll" },
   { name: "content-publish", cron: "0 9 * * *", path: "/api/cron/content-publish" },
   { name: "usage-snapshot", cron: "0 0 * * *", path: "/api/cron/usage-snapshot" },
